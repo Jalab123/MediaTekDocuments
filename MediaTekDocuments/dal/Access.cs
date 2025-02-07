@@ -7,6 +7,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace MediaTekDocuments.dal
 {
@@ -37,6 +38,10 @@ namespace MediaTekDocuments.dal
         private const string POST = "POST";
         /// <summary>
         /// méthode HTTP pour update
+        private const string PUT = "PUT";
+        /// <summary>
+        /// méthode HTTP pour delete
+        private const string DELETE = "DELETE";
 
         /// <summary>
         /// Méthode privée pour créer un singleton
@@ -130,6 +135,46 @@ namespace MediaTekDocuments.dal
             return lesRevues;
         }
 
+        /// <summary>
+        /// Retourne toutes les commandes à partir de la BDD
+        /// </summary>
+        /// <returns>Liste d'objets Commande</returns>
+        public List<Commande> GetAllCommandes()
+        {
+            List<Commande> lesCommandes = TraitementRecup<Commande>(GET, "commande", null);
+            return lesCommandes;
+        }
+
+        /// <summary>
+        /// Retourne toutes les commandes à partir de la BDD
+        /// </summary>
+        /// <returns>Liste d'objets CommandeDocument</returns>
+        public List<CommandeDocument> GetAllCommandeDocuments()
+        {
+            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, "commandedocument", null);
+            return lesCommandeDocuments;
+        }
+
+        public List<Suivi> GetAllSuivis()
+        {
+            List<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
+            return lesSuivis;
+        }
+
+        public List<CommandeDocument> GetCommandeDocumentsLivre(string idlivredvd)
+        {
+            String jsonIdCommandeDocument = convertToJson("idlivredvd", idlivredvd);
+            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, "commandedocument/" + jsonIdCommandeDocument, null);
+            return lesCommandeDocuments;
+        }
+
+        public List<CommandeDocument> GetCommandeDocumentsDvd(string idlivredvd)
+        {
+            String jsonIdCommandeDocument = convertToJson("idlivredvd", idlivredvd);
+            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, "commandedocument/" + jsonIdCommandeDocument, null);
+            return lesCommandeDocuments;
+        }
+
 
         /// <summary>
         /// Retourne les exemplaires d'une revue
@@ -141,6 +186,142 @@ namespace MediaTekDocuments.dal
             String jsonIdDocument = convertToJson("id", idDocument);
             List<Exemplaire> lesExemplaires = TraitementRecup<Exemplaire>(GET, "exemplaire/" + jsonIdDocument, null);
             return lesExemplaires;
+        }
+
+        public bool CreerCommandeLivre(Commande commande)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(commande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool CreerCommandeDvd(Commande commande)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(commande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool CreerCommandeDocumentsLivre(CommandeDocument commandeDocument)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandedocument", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool CreerCommandeDocumentsDvd(CommandeDocument commandeDocument)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandedocument", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool CreerSuivi(Suivi suivi)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(suivi);
+            try
+            {
+                List<Suivi> liste = TraitementRecup<Suivi>(POST, "suivi", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool SupprimerSuivi(Suivi suivi)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(suivi);
+            try
+            {
+                List<Suivi> liste = TraitementRecup<Suivi>(DELETE, "suivi", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool ModifierSuivi(Suivi suivi)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(suivi);
+            try
+            {
+                List<Suivi> liste = TraitementRecup<Suivi>(PUT, "suivi", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool SupprimerCommande(Commande commande)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(commande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commande/" + jsonExemplaire, null);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+        
+
+        public bool SupprimerCommandeDocument(CommandeDocument commandeDocument)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandedocument", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
         }
 
         /// <summary>

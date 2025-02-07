@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using System.IO;
+using System.Collections;
+using System.Globalization;
 
 namespace MediaTekDocuments.view
 
@@ -1238,6 +1240,537 @@ namespace MediaTekDocuments.view
                 pcbReceptionExemplaireRevueImage.Image = null;
             }
         }
+        #endregion
+
+        #region Onglet Gestion Commandes Livres
+        private List<Commande> lesCommandes = new List<Commande>();
+        private List<CommandeDocument> lesCommandeDocuments = new List<CommandeDocument>();
+        private List<Suivi> lesSuivis = new List<Suivi>();
+
+        private readonly BindingSource bdgLivresListeCommandes = new BindingSource();
+
+        private void tabGestionCommandesLivres_Enter(object sender, EventArgs e)
+        {
+            lesLivres = controller.GetAllLivres();
+            lesCommandes = controller.GetAllCommandes();
+            lesSuivis = controller.GetAllSuivis();
+            RemplirCbxNumeroDocument(lesLivres);
+        }
+
+        /// <summary>
+        /// Remplit le dategrid avec la liste reçue en paramètre
+        /// </summary>
+        /// <param name="livres">liste de livres</param>
+        private void RemplirCbxNumeroDocument(List<Livre> livres)
+        {
+            List<Livre> sortedList = new List<Livre>();
+            sortedList = livres.OrderBy(o => o.Id).ToList();
+            foreach (Livre livre in sortedList)
+            {
+                cbxGCLNumeroDocument.Items.Add(livre.Id);
+            }
+        }
+
+        private void cbxNumeroDocument_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //MessageBox.Show(cbxGCLNumeroDocument.SelectedItem.ToString(), "Information");
+            Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
+            txbGCLISBN.Text = livre.Isbn.ToString();
+            txbGCLTitre.Text = livre.Titre.ToString();
+            txbGCLAuteur.Text = livre.Auteur.ToString();
+            txbGCLCollection.Text = livre.Collection.ToString();
+            txbGCLGenre.Text = livre.Genre.ToString();
+            txbGCLPublic.Text = livre.Public.ToString();
+            txbGCLRayon.Text = livre.Rayon.ToString();
+            txbGCLCheminImg.Text = livre.Image.ToString();
+            //lesCommandes = controller.GetAllCommandes();
+            //lesCommandeDocuments = controller.GetAllCommandeDocuments();
+            //lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+            RemplirLivresListeCommandes(lesCommandeDocuments);
+            cbxGCLStatut.SelectedIndex = -1;
+            cbxGCLStatut.Items.Clear();
+            lblGCLStatut.Enabled = false;
+            cbxGCLStatut.Enabled = false;
+            btnGCLModifierStatut.Enabled = false;
+            btnCGLSupprimerCommande.Enabled = false;
+            string image = livre.Image;
+            try
+            {
+                pcbGCLImage.Image = Image.FromFile(image);
+            }
+            catch
+            {
+                pcbGCLImage.Image = null;
+            }
+        }
+
+        /// <summary>
+        /// Remplit le dategrid avec la liste reçue en paramètre avec les commandes
+        /// </summary>
+        /// <param name="livres">liste de livres</param>
+        private void RemplirLivresListeCommandes(List<CommandeDocument> commandeDocuments)
+        {
+            bdgLivresListeCommandes.DataSource = commandeDocuments;
+            dgvCGLCommandesLivre.DataSource = bdgLivresListeCommandes;
+            dgvCGLCommandesLivre.Columns["IdLivreDVD"].Visible = false;
+            dgvCGLCommandesLivre.Columns["IdSuivi"].Visible = false;
+            dgvCGLCommandesLivre.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            cbxGCLStatut.SelectedIndex = -1;
+            cbxGCLStatut.Items.Clear();
+            dgvCGLCommandesLivre.ClearSelection();
+            lblGCLStatut.Enabled = false;
+            cbxGCLStatut.Enabled = false;
+            btnGCLModifierStatut.Enabled = false;
+            btnCGLSupprimerCommande.Enabled = false;
+        }
+
+        private void btnGCLNouvelleCommande_Click(object sender, EventArgs e)
+        {
+            Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
+            if (livre == null)
+            {
+                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (txbGCLDateCommande.Text == "" || txbGCLMontant.Text == "" || txbGCLNbExemplaire.Text == "")
+            {
+                MessageBox.Show("Erreur : veuillez remplir tous les champs.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!dateConversion(txbGCLDateCommande.Text))
+            {
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!floatConversion(txbGCLMontant.Text))
+            {
+                MessageBox.Show("Erreur : le montant entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!intConversion(txbGCLNbExemplaire.Text))
+            {
+                MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //Console.WriteLine(cbxGCLNumeroDocument.SelectedItem);
+            int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
+            Commande commande = new Commande(valeur.ToString(), txbGCLDateCommande.Text, txbGCLMontant.Text);
+            controller.CreerCommandeLivre(commande);
+            int valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
+            Suivi suivi = new Suivi(valeur2.ToString(), "En cours");
+            controller.CreerSuivi(suivi);
+            CommandeDocument commandeDocument = new CommandeDocument(valeur.ToString(), livre.Id, valeur2.ToString(), null, null, txbGCLNbExemplaire.Text, null);
+            controller.CreerCommandeDocumentsLivre(commandeDocument);
+            MessageBox.Show("La commande a été ajoutée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lesCommandes = controller.GetAllCommandes();
+            lesSuivis = controller.GetAllSuivis();
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+            RemplirLivresListeCommandes(lesCommandeDocuments);
+        }
+
+        private void dgvCGLCommandesLivre_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            cbxGCLStatut.SelectedIndex = -1;
+            cbxGCLStatut.Items.Clear();
+            DataGridViewRow selectedRow = dgvCGLCommandesLivre.Rows[e.RowIndex];
+            if (selectedRow.Cells[0].Value != null)
+            {
+                string contenu = selectedRow.Cells[6].Value.ToString();
+                switch (contenu)
+                {
+                    case "En cours":
+                        lblGCLStatut.Enabled = true;
+                        cbxGCLStatut.Enabled = true;
+                        btnGCLModifierStatut.Enabled = true;
+                        cbxGCLStatut.Items.Add("En cours");
+                        cbxGCLStatut.Items.Add("Livrée");
+                        cbxGCLStatut.Items.Add("Relancée");
+                        cbxGCLStatut.SelectedIndex = 0;
+                        btnCGLSupprimerCommande.Enabled = true;
+                        break;
+                    case "Livrée":
+                        lblGCLStatut.Enabled = true;
+                        cbxGCLStatut.Enabled = true;
+                        btnGCLModifierStatut.Enabled = true;
+                        cbxGCLStatut.Items.Add("Livrée");
+                        cbxGCLStatut.Items.Add("Réglée");
+                        cbxGCLStatut.SelectedIndex = 0;
+                        btnCGLSupprimerCommande.Enabled = false;
+                        break;
+                    case "Relancée":
+                        lblGCLStatut.Enabled = true;
+                        cbxGCLStatut.Enabled = true;
+                        btnGCLModifierStatut.Enabled = true;
+                        cbxGCLStatut.Items.Add("Relancée");
+                        cbxGCLStatut.Items.Add("En cours");
+                        cbxGCLStatut.Items.Add("Livrée");
+                        cbxGCLStatut.SelectedIndex = 0;
+                        btnCGLSupprimerCommande.Enabled = true;
+                        break;
+                    case "Réglée":
+                        lblGCLStatut.Enabled = false;
+                        cbxGCLStatut.Enabled = false;
+                        btnGCLModifierStatut.Enabled = false;
+                        btnCGLSupprimerCommande.Enabled = true;
+                        break;
+                    default:
+                        lblGCLStatut.Enabled = false;
+                        cbxGCLStatut.Enabled = false;
+                        btnGCLModifierStatut.Enabled = false;
+                        btnCGLSupprimerCommande.Enabled = false;
+                        break;
+                }
+            }
+
+        }
+
+        private void dgvCGLCommandesLivre_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+            string titreColonne = dgvCGLCommandesLivre.Columns[e.ColumnIndex].HeaderText;
+            List<CommandeDocument> sortedList = new List<CommandeDocument>();
+            switch (titreColonne)
+            {
+                case "Id":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.Id).ToList();
+                    break;
+                case "DateCommande":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.DateCommande).ToList();
+                    break;
+                case "Montant":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.Montant).ToList();
+                    break;
+                case "NbExemplaire":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.NbExemplaire).ToList();
+                    break;
+                case "Statut":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.Statut).ToList();
+                    break;
+            }
+            RemplirLivresListeCommandes(sortedList);
+        }
+
+        private void btnGCLModifierStatut_Click(object sender, EventArgs e)
+        {
+            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCLStatut.SelectedItem.ToString() + ")", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirmation == DialogResult.Yes)
+            {
+                Suivi leSuivi = lesSuivis.Find(x => x.Id.Equals(dgvCGLCommandesLivre.CurrentRow.Cells[2].Value));
+                leSuivi.Statut = cbxGCLStatut.SelectedItem.ToString();
+                controller.ModifierSuivi(leSuivi);
+                MessageBox.Show("Le statut de la commande a été modifié avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
+                lesCommandes = controller.GetAllCommandes();
+                lesSuivis = controller.GetAllSuivis();
+                lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+                RemplirLivresListeCommandes(lesCommandeDocuments);
+            }
+        }
+
+        private void btnCGLSupprimerCommande_Click(object sender, EventArgs e)
+        {
+            if (dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() != "Livrée")
+            {
+                DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirmation == DialogResult.Yes)
+                {
+                    //Console.WriteLine("Test");
+                    //Console.WriteLine(dgvCGLCommandesLivre.CurrentRow.Cells[0].Value.ToString());
+                    Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGLCommandesLivre.CurrentRow.Cells[0].Value));
+                    //Console.WriteLine(laCommande.ToString());
+                    controller.SupprimerCommande(laCommande);
+                    //CommandeDocument laCommandeDocument = lesCommandeDocuments.Find(x => x.Id.Equals(dgvCGLCommandesLivre.CurrentRow.Cells[0].Value));
+                    //controller.SupprimerCommandeDocument(laCommandeDocument);
+                    MessageBox.Show("La commande a été supprimée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
+                    lesCommandes = controller.GetAllCommandes();
+                    lesSuivis = controller.GetAllSuivis();
+                    lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+                    RemplirLivresListeCommandes(lesCommandeDocuments);
+                }
+            }
+        }
+
+        public bool dateConversion(string dateString)
+        {
+            try
+            {
+                DateTime conversion = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                return true;
+            } catch
+            {
+                return false;
+            }
+        }
+
+        public bool intConversion(string intString)
+        {
+            try
+            {
+                int conversion = int.Parse(intString);
+                return true;
+            } catch
+            {
+                return false;
+            }
+        }
+
+        public bool floatConversion(string floatString)
+        {
+            try
+            {
+                float conversion = float.Parse(floatString);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Onglet Gestion Commandes Dvd
+
+        private readonly BindingSource bdgDvdsListeCommandes = new BindingSource();
+
+        private void tabGestionCommandesDvd_Enter(object sender, EventArgs e)
+        {
+            lesDvd = controller.GetAllDvd();
+            lesCommandes = controller.GetAllCommandes();
+            lesSuivis = controller.GetAllSuivis();
+            RemplirCbxDvdNumeroDocument(lesDvd);
+        }
+
+        /// <summary>
+        /// Remplit le dategrid avec la liste reçue en paramètre
+        /// </summary>
+        /// <param name="livres">liste de livres</param>
+        private void RemplirCbxDvdNumeroDocument(List<Dvd> dvds)
+        {
+            List<Dvd> sortedList = new List<Dvd>();
+            sortedList = dvds.OrderBy(o => o.Id).ToList();
+            foreach (Dvd dvd in sortedList)
+            {
+                cbxGCDNumeroDocument.Items.Add(dvd.Id);
+            }
+        }
+
+        private void cbxGCDNumeroDocument_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
+            txbGCDDuree.Text = dvd.Duree.ToString();
+            txbGCDTitre.Text = dvd.Titre.ToString();
+            txbGCDRealisateur.Text = dvd.Realisateur.ToString();
+            txbGCDSynopsis.Text = dvd.Synopsis.ToString();
+            txbGCDGenre.Text = dvd.Genre.ToString();
+            txbGCDPublic.Text = dvd.Public.ToString();
+            txbGCDRayon.Text = dvd.Rayon.ToString();
+            txbGCDCheminImg.Text = dvd.Image.ToString();
+            lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+            RemplirDvdsListeCommandes(lesCommandeDocuments);
+            cbxGCDStatut.SelectedIndex = -1;
+            cbxGCDStatut.Items.Clear();
+            lblGCDStatut.Enabled = false;
+            cbxGCDStatut.Enabled = false;
+            btnGCDModifierStatut.Enabled = false;
+            btnGCDSupprimerCommande.Enabled = false;
+            string image = dvd.Image;
+            try
+            {
+                pcbGCDImage.Image = Image.FromFile(image);
+            }
+            catch
+            {
+                pcbGCDImage.Image = null;
+            }
+        }
+
+        /// <summary>
+        /// Remplit le dategrid avec la liste reçue en paramètre avec les commandes
+        /// </summary>
+        /// <param name="livres">liste de livres</param>
+        private void RemplirDvdsListeCommandes(List<CommandeDocument> commandeDocuments)
+        {
+            bdgDvdsListeCommandes.DataSource = commandeDocuments;
+            dgvCGDCommandesDvd.DataSource = bdgDvdsListeCommandes;
+            dgvCGDCommandesDvd.Columns["IdLivreDVD"].Visible = false;
+            dgvCGDCommandesDvd.Columns["IdSuivi"].Visible = false;
+            dgvCGDCommandesDvd.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            cbxGCDStatut.SelectedIndex = -1;
+            cbxGCDStatut.Items.Clear();
+            dgvCGDCommandesDvd.ClearSelection();
+            lblGCDStatut.Enabled = false;
+            cbxGCDStatut.Enabled = false;
+            btnGCDModifierStatut.Enabled = false;
+            btnGCDSupprimerCommande.Enabled = false;
+        }
+
+        private void btnGCDNouvelleCommande_Click(object sender, EventArgs e)
+        {
+            Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
+            if (dvd == null)
+            {
+                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (txbGCDDateCommande.Text == "" || txbGCDMontant.Text == "" || txbGCDNbExemplaire.Text == "")
+            {
+                MessageBox.Show("Erreur : veuillez remplir tous les champs.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!dateConversion(txbGCDDateCommande.Text))
+            {
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!floatConversion(txbGCDMontant.Text))
+            {
+                MessageBox.Show("Erreur : le montant entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!intConversion(txbGCDNbExemplaire.Text))
+            {
+                MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
+            Commande commande = new Commande(valeur.ToString(), txbGCDDateCommande.Text, txbGCDMontant.Text);
+            controller.CreerCommandeDvd(commande);
+            int valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
+            Suivi suivi = new Suivi(valeur2.ToString(), "En cours");
+            controller.CreerSuivi(suivi);
+            CommandeDocument commandeDocument = new CommandeDocument(valeur.ToString(), dvd.Id, valeur2.ToString(), null, null, txbGCDNbExemplaire.Text, null);
+            controller.CreerCommandeDocumentsDvd(commandeDocument);
+            MessageBox.Show("La commande a été ajoutée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lesCommandes = controller.GetAllCommandes();
+            lesSuivis = controller.GetAllSuivis();
+            lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+            RemplirDvdsListeCommandes(lesCommandeDocuments);
+        }
+
+        private void dgvCGDCommandesDvd_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            cbxGCDStatut.SelectedIndex = -1;
+            cbxGCDStatut.Items.Clear();
+            DataGridViewRow selectedRow = dgvCGDCommandesDvd.Rows[e.RowIndex];
+            if (selectedRow.Cells[0].Value != null)
+            {
+                string contenu = selectedRow.Cells[6].Value.ToString();
+                switch (contenu)
+                {
+                    case "En cours":
+                        lblGCDStatut.Enabled = true;
+                        cbxGCDStatut.Enabled = true;
+                        btnGCDModifierStatut.Enabled = true;
+                        cbxGCDStatut.Items.Add("En cours");
+                        cbxGCDStatut.Items.Add("Livrée");
+                        cbxGCDStatut.Items.Add("Relancée");
+                        cbxGCDStatut.SelectedIndex = 0;
+                        btnGCDSupprimerCommande.Enabled = true;
+                        break;
+                    case "Livrée":
+                        lblGCDStatut.Enabled = true;
+                        cbxGCDStatut.Enabled = true;
+                        btnGCDModifierStatut.Enabled = true;
+                        cbxGCDStatut.Items.Add("Livrée");
+                        cbxGCDStatut.Items.Add("Réglée");
+                        cbxGCDStatut.SelectedIndex = 0;
+                        btnGCDSupprimerCommande.Enabled = false;
+                        break;
+                    case "Relancée":
+                        lblGCDStatut.Enabled = true;
+                        cbxGCDStatut.Enabled = true;
+                        btnGCDModifierStatut.Enabled = true;
+                        cbxGCDStatut.Items.Add("Relancée");
+                        cbxGCDStatut.Items.Add("En cours");
+                        cbxGCDStatut.Items.Add("Livrée");
+                        cbxGCDStatut.SelectedIndex = 0;
+                        btnGCDSupprimerCommande.Enabled = true;
+                        break;
+                    case "Réglée":
+                        lblGCDStatut.Enabled = false;
+                        cbxGCDStatut.Enabled = false;
+                        btnGCDModifierStatut.Enabled = false;
+                        btnGCDSupprimerCommande.Enabled = true;
+                        break;
+                    default:
+                        lblGCDStatut.Enabled = false;
+                        cbxGCDStatut.Enabled = false;
+                        btnGCDModifierStatut.Enabled = false;
+                        btnGCDSupprimerCommande.Enabled = false;
+                        break;
+                }
+            }
+
+        }
+
+        private void dgvCGDCommandesDvd_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
+            lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+            string titreColonne = dgvCGDCommandesDvd.Columns[e.ColumnIndex].HeaderText;
+            List<CommandeDocument> sortedList = new List<CommandeDocument>();
+            switch (titreColonne)
+            {
+                case "Id":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.Id).ToList();
+                    break;
+                case "DateCommande":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.DateCommande).ToList();
+                    break;
+                case "Montant":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.Montant).ToList();
+                    break;
+                case "NbExemplaire":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.NbExemplaire).ToList();
+                    break;
+                case "Statut":
+                    sortedList = lesCommandeDocuments.OrderBy(o => o.Statut).ToList();
+                    break;
+            }
+            RemplirDvdsListeCommandes(sortedList);
+        }
+
+        private void btnGCDModifierStatut_Click(object sender, EventArgs e)
+        {
+            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCDStatut.SelectedItem.ToString() + ")", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirmation == DialogResult.Yes)
+            {
+                Suivi leSuivi = lesSuivis.Find(x => x.Id.Equals(dgvCGDCommandesDvd.CurrentRow.Cells[2].Value));
+                leSuivi.Statut = cbxGCDStatut.SelectedItem.ToString();
+                controller.ModifierSuivi(leSuivi);
+                MessageBox.Show("Le statut de la commande a été modifié avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
+                lesCommandes = controller.GetAllCommandes();
+                lesSuivis = controller.GetAllSuivis();
+                lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+                RemplirDvdsListeCommandes(lesCommandeDocuments);
+            }
+        }
+
+        private void btnCGDSupprimerCommande_Click(object sender, EventArgs e)
+        {
+            if (dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() != "Livrée")
+            {
+                DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirmation == DialogResult.Yes)
+                {
+                    Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGDCommandesDvd.CurrentRow.Cells[0].Value));
+                    controller.SupprimerCommande(laCommande);
+                    MessageBox.Show("La commande a été supprimée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
+                    lesCommandes = controller.GetAllCommandes();
+                    lesSuivis = controller.GetAllSuivis();
+                    lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+                    RemplirDvdsListeCommandes(lesCommandeDocuments);
+                }
+            }
+        }
+
+
         #endregion
     }
 }

@@ -76,6 +76,39 @@ namespace MediaTekDocuments.controller
             return access.GetAllPublics();
         }
 
+        /// <summary>
+        /// getter sur les commandes
+        /// </summary>
+        /// <returns>Liste d'objets Commande</returns>
+        public List<Commande> GetAllCommandes()
+        {
+            return access.GetAllCommandes();
+        }
+
+        /// <summary>
+        /// getter sur les commandes
+        /// </summary>
+        /// <returns>Liste d'objets CommandeDocument</returns>
+        public List<CommandeDocument> GetAllCommandeDocuments()
+        {
+            return access.GetAllCommandeDocuments();
+        }
+
+        public List<Suivi> GetAllSuivis()
+        {
+            return access.GetAllSuivis();
+        }
+
+        public List<CommandeDocument> GetCommandeDocumentsLivre(string idlivredvd)
+        {
+            return access.GetCommandeDocumentsLivre(idlivredvd);
+        }
+
+        public List<CommandeDocument> GetCommandeDocumentsDvd(string idlivredvd)
+        {
+            return access.GetCommandeDocumentsDvd(idlivredvd);
+        }
+
 
         /// <summary>
         /// récupère les exemplaires d'une revue
@@ -85,6 +118,51 @@ namespace MediaTekDocuments.controller
         public List<Exemplaire> GetExemplairesRevue(string idDocuement)
         {
             return access.GetExemplairesRevue(idDocuement);
+        }
+
+        public bool CreerCommandeLivre(Commande commande)
+        {
+            return access.CreerCommandeLivre(commande);
+        }
+
+        public bool CreerCommandeDvd(Commande commande)
+        {
+            return access.CreerCommandeDvd(commande);
+        }
+
+        public bool CreerCommandeDocumentsLivre(CommandeDocument commandeDocument)
+        {
+            return access.CreerCommandeDocumentsLivre(commandeDocument);
+        }
+
+        public bool CreerCommandeDocumentsDvd(CommandeDocument commandeDocument)
+        {
+            return access.CreerCommandeDocumentsDvd(commandeDocument);
+        }
+
+        public bool CreerSuivi(Suivi suivi)
+        {
+            return access.CreerSuivi(suivi);
+        }
+
+        public bool SupprimerSuivi(Suivi suivi)
+        {
+            return access.SupprimerSuivi(suivi);
+        }
+
+        public bool ModifierSuivi(Suivi suivi)
+        {
+            return access.ModifierSuivi(suivi);
+        }
+
+        public bool SupprimerCommande(Commande commande)
+        {
+            return access.SupprimerCommande(commande);
+        }
+
+        public bool SupprimerCommandeDocument(CommandeDocument commandeDocument)
+        {
+            return access.SupprimerCommandeDocument(commandeDocument);
         }
 
         /// <summary>
