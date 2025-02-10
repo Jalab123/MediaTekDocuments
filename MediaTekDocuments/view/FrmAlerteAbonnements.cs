@@ -14,11 +14,11 @@ namespace MediaTekDocuments.view
 {
     public partial class FrmAlerteAbonnements : Form
     {
-        private readonly FrmAlertAbonnementsController controller;
+        private readonly FrmAlerteAbonnementsController controller;
         public FrmAlerteAbonnements()
         {
             InitializeComponent();
-            controller = new FrmAlertAbonnementsController();
+            controller = new FrmAlerteAbonnementsController();
         }
 
         private void FrmAlerteAbonnements_Load(object sender, EventArgs e)

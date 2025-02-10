@@ -124,6 +124,11 @@ namespace MediaTekDocuments.controller
             return access.GetExemplairesRevue(idDocuement);
         }
 
+        public List<Abonnement> GetDerniersAbonnements()
+        {
+            return access.GetDerniersAbonnements();
+        }
+
         public bool CreerCommandeLivre(Commande commande)
         {
             return access.CreerCommandeLivre(commande);
@@ -178,6 +183,7 @@ namespace MediaTekDocuments.controller
         {
             return access.SupprimerCommandeDocument(commandeDocument);
         }
+
 
         /// <summary>
         /// Crée un exemplaire d'une revue dans la bdd

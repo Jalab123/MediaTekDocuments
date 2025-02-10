@@ -188,6 +188,13 @@ namespace MediaTekDocuments.dal
             return lesCommandeDocuments;
         }
 
+        public List<Utilisateur> GetUtilisateur(string login, string pwd)
+        {
+            String jsonUtilisateur = "{" + "\"login\": \"" + login + "\"," + "\"pwd\": \"" + pwd + "\"" + "}";
+            List<Utilisateur> lesUtilisateurs = TraitementRecup<Utilisateur>(GET, "utilisateur/" + jsonUtilisateur, null);
+            return lesUtilisateurs;
+        }
+
         public List<Abonnement> GetAbonnementsRevue(string idrevue)
         {
             String jsonIdAbonnement = convertToJson("idrevue", idrevue);

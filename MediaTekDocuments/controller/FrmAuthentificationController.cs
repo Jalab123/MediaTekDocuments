@@ -5,9 +5,9 @@ using MediaTekDocuments.dal;
 namespace MediaTekDocuments.controller
 {
     /// <summary>
-    /// Contrôleur lié à FrmAlertAbonnementsController
+    /// Contrôleur lié à FrmAuthentificationController
     /// </summary>
-    class FrmAlerteAbonnementsController
+    class FrmAuthentificationController
     {
         /// <summary>
         /// Objet d'accès aux données
@@ -17,19 +17,14 @@ namespace MediaTekDocuments.controller
         /// <summary>
         /// Récupération de l'instance unique d'accès aux données
         /// </summary>
-        public FrmAlerteAbonnementsController()
+        public FrmAuthentificationController()
         {
             access = Access.GetInstance();
         }
 
-        public List<Abonnement> GetDerniersAbonnements()
+        public List<Utilisateur> GetUtilisateur(string login, string pwd)
         {
-            return access.GetDerniersAbonnements();
-        }
-
-        public List<Document> GetDocument(string iddocument)
-        {
-            return access.GetDocument(iddocument);
+            return access.GetUtilisateur(login, pwd);
         }
     }
 }

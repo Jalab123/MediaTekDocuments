@@ -23,15 +23,27 @@ namespace MediaTekDocuments.view
         private readonly BindingSource bdgPublics = new BindingSource();
         private readonly BindingSource bdgRayons = new BindingSource();
 
+        private int niveauDroits;
+
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
         /// </summary>
-        internal FrmMediatek()
+        internal FrmMediatek(int niveauDroits)
         {
             InitializeComponent();
             this.controller = new FrmMediatekController();
-            FrmAlerteAbonnements fenetre = new FrmAlerteAbonnements();
-            fenetre.ShowDialog();
+            this.niveauDroits = niveauDroits;
+            if (niveauDroits == 2 && controller.GetDerniersAbonnements().Count() != 0)
+            {
+                FrmAlerteAbonnements fenetre = new FrmAlerteAbonnements();
+                fenetre.ShowDialog();
+            }
+            if (niveauDroits == 1)
+            {
+                tabGestionCommandesLivres.Enabled = false;
+                tabGestionCommandesDvd.Enabled = false;
+                tabGestionCommandesRevues.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -1275,6 +1287,11 @@ namespace MediaTekDocuments.view
 
         private void cbxNumeroDocument_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             //MessageBox.Show(cbxGCLNumeroDocument.SelectedItem.ToString(), "Information");
             Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
             txbGCLISBN.Text = livre.Isbn.ToString();
@@ -1330,6 +1347,11 @@ namespace MediaTekDocuments.view
         private void btnGCLNouvelleCommande_Click(object sender, EventArgs e)
         {
             Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (livre == null)
             {
                 MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1456,6 +1478,11 @@ namespace MediaTekDocuments.view
 
         private void btnGCLModifierStatut_Click(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCLStatut.SelectedItem.ToString() + ")", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmation == DialogResult.Yes)
             {
@@ -1473,6 +1500,11 @@ namespace MediaTekDocuments.view
 
         private void btnCGLSupprimerCommande_Click(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() != "Livrée")
             {
                 DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1562,6 +1594,11 @@ namespace MediaTekDocuments.view
 
         private void cbxGCDNumeroDocument_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
             txbGCDDuree.Text = dvd.Duree.ToString();
             txbGCDTitre.Text = dvd.Titre.ToString();
@@ -1616,6 +1653,11 @@ namespace MediaTekDocuments.view
             if (dvd == null)
             {
                 MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (txbGCDDateCommande.Text == "" || txbGCDMontant.Text == "" || txbGCDNbExemplaire.Text == "")
@@ -1738,6 +1780,11 @@ namespace MediaTekDocuments.view
 
         private void btnGCDModifierStatut_Click(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCDStatut.SelectedItem.ToString() + ")", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmation == DialogResult.Yes)
             {
@@ -1755,6 +1802,11 @@ namespace MediaTekDocuments.view
 
         private void btnCGDSupprimerCommande_Click(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() != "Livrée")
             {
                 DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1805,6 +1857,11 @@ namespace MediaTekDocuments.view
 
         private void cbxGCRNumeroDocument_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
             txbGCRTitre.Text = revue.Titre.ToString();
             txbGCRPeriodicite.Text = revue.Periodicite.ToString();
@@ -1843,6 +1900,11 @@ namespace MediaTekDocuments.view
         private void btnGCRNouvelleCommande_Click(object sender, EventArgs e)
         {
             Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (revue == null)
             {
                 MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1909,6 +1971,11 @@ namespace MediaTekDocuments.view
 
         private void btnGCRSupprimerCommande_Click(object sender, EventArgs e)
         {
+            if (niveauDroits < 2)
+            {
+                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             List<Exemplaire> lesExemplaires = new List<Exemplaire>();
             lesExemplaires = controller.GetExemplairesRevue(cbxGCRNumeroDocument.SelectedItem.ToString());
             foreach (Exemplaire exemplaire in lesExemplaires)
