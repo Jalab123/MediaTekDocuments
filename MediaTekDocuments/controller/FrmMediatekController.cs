@@ -109,6 +109,10 @@ namespace MediaTekDocuments.controller
             return access.GetCommandeDocumentsDvd(idlivredvd);
         }
 
+        public List<Abonnement> GetAbonnementsRevue(string idrevue)
+        {
+            return access.GetAbonnementsRevue(idrevue);
+        }
 
         /// <summary>
         /// récupère les exemplaires d'une revue
@@ -130,6 +134,11 @@ namespace MediaTekDocuments.controller
             return access.CreerCommandeDvd(commande);
         }
 
+        public bool CreerCommandeRevue(Commande commande)
+        {
+            return access.CreerCommandeRevue(commande);
+        }
+
         public bool CreerCommandeDocumentsLivre(CommandeDocument commandeDocument)
         {
             return access.CreerCommandeDocumentsLivre(commandeDocument);
@@ -138,6 +147,11 @@ namespace MediaTekDocuments.controller
         public bool CreerCommandeDocumentsDvd(CommandeDocument commandeDocument)
         {
             return access.CreerCommandeDocumentsDvd(commandeDocument);
+        }
+
+        public bool CreerAbonnementRevue(Abonnement abonnement)
+        {
+            return access.CreerAbonnementRevue(abonnement);
         }
 
         public bool CreerSuivi(Suivi suivi)

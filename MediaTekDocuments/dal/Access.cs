@@ -155,6 +155,12 @@ namespace MediaTekDocuments.dal
             return lesCommandeDocuments;
         }
 
+        public List<Abonnement> GetDerniersAbonnements()
+        {
+            List<Abonnement> lesAbonnements = TraitementRecup<Abonnement>(GET, "abonnement", null);
+            return lesAbonnements;
+        }
+
         public List<Suivi> GetAllSuivis()
         {
             List<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
@@ -168,11 +174,25 @@ namespace MediaTekDocuments.dal
             return lesCommandeDocuments;
         }
 
+        public List<Document> GetDocument(string iddocument)
+        {
+            String jsonIdCommandeDocument = convertToJson("id", iddocument);
+            List<Document> lesCommandeDocuments = TraitementRecup<Document>(GET, "document/" + jsonIdCommandeDocument, null);
+            return lesCommandeDocuments;
+        }
+
         public List<CommandeDocument> GetCommandeDocumentsDvd(string idlivredvd)
         {
             String jsonIdCommandeDocument = convertToJson("idlivredvd", idlivredvd);
             List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, "commandedocument/" + jsonIdCommandeDocument, null);
             return lesCommandeDocuments;
+        }
+
+        public List<Abonnement> GetAbonnementsRevue(string idrevue)
+        {
+            String jsonIdAbonnement = convertToJson("idrevue", idrevue);
+            List<Abonnement> lesAbonnements = TraitementRecup<Abonnement>(GET, "abonnement/" + jsonIdAbonnement, null);
+            return lesAbonnements;
         }
 
 
@@ -218,6 +238,21 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        public bool CreerCommandeRevue(Commande commande)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(commande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
         public bool CreerCommandeDocumentsLivre(CommandeDocument commandeDocument)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
@@ -239,6 +274,21 @@ namespace MediaTekDocuments.dal
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandedocument", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        public bool CreerAbonnementRevue(Abonnement abonnement)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(abonnement);
+            try
+            {
+                List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "abonnement", "champs=" + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)

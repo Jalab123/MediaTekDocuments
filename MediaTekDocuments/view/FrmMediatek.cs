@@ -30,6 +30,8 @@ namespace MediaTekDocuments.view
         {
             InitializeComponent();
             this.controller = new FrmMediatekController();
+            FrmAlerteAbonnements fenetre = new FrmAlerteAbonnements();
+            fenetre.ShowDialog();
         }
 
         /// <summary>
@@ -1772,5 +1774,184 @@ namespace MediaTekDocuments.view
 
 
         #endregion
+
+        #region Onglet Gestion Commandes Revue
+
+        private List<Abonnement> lesAbonnements = new List<Abonnement>();
+
+        private readonly BindingSource bdgRevuesListeAbonnements = new BindingSource();
+
+        private void tabGestionCommandesRevues_Enter(object sender, EventArgs e)
+        {
+            lesRevues = controller.GetAllRevues();
+            lesCommandes = controller.GetAllCommandes();
+            lesSuivis = controller.GetAllSuivis();
+            RemplirCbxRevuesNumeroDocument(lesRevues);
+        }
+
+        /// <summary>
+        /// Remplit le dategrid avec la liste reçue en paramètre
+        /// </summary>
+        /// <param name="livres">liste de livres</param>
+        private void RemplirCbxRevuesNumeroDocument(List<Revue> revues)
+        {
+            List<Revue> sortedList = new List<Revue>();
+            sortedList = revues.OrderBy(o => o.Id).ToList();
+            foreach (Revue revue in sortedList)
+            {
+                cbxGCRNumeroDocument.Items.Add(revue.Id);
+            }
+        }
+
+        private void cbxGCRNumeroDocument_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
+            txbGCRTitre.Text = revue.Titre.ToString();
+            txbGCRPeriodicite.Text = revue.Periodicite.ToString();
+            txbGCRDelaiMAD.Text = revue.DelaiMiseADispo.ToString();
+            txbGCRGenre.Text = revue.Genre.ToString();
+            txbGCRPublic.Text = revue.Public.ToString();
+            txbGCRRayon.Text = revue.Rayon.ToString();
+            txbGCRCheminImg.Text = revue.Image.ToString();
+            lesAbonnements = controller.GetAbonnementsRevue(revue.Id);
+            RemplirRevuesListeAbonnements(lesAbonnements);
+            string image = revue.Image;
+            try
+            {
+                pcbGCRImage.Image = Image.FromFile(image);
+            }
+            catch
+            {
+                pcbGCRImage.Image = null;
+            }
+        }
+
+        /// <summary>
+        /// Remplit le dategrid avec la liste reçue en paramètre avec les commandes
+        /// </summary>
+        /// <param name="livres">liste de livres</param>
+        private void RemplirRevuesListeAbonnements(List<Abonnement> abonnements)
+        {
+            bdgRevuesListeAbonnements.DataSource = abonnements;
+            dgvCGRCommandesRevues.DataSource = bdgRevuesListeAbonnements;
+            dgvCGRCommandesRevues.Columns["IdRevue"].Visible = false;
+            dgvCGRCommandesRevues.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgvCGRCommandesRevues.ClearSelection();
+            btnGCRSupprimerCommande.Enabled = false;
+        }
+
+        private void btnGCRNouvelleCommande_Click(object sender, EventArgs e)
+        {
+            Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
+            if (revue == null)
+            {
+                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (txbGCRDateCommande.Text == "" || txbGCRMontant.Text == "" || txbGCRDateExpiration.Text == "")
+            {
+                MessageBox.Show("Erreur : veuillez remplir tous les champs.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!dateConversion(txbGCRDateCommande.Text) || !dateConversion(txbGCRDateExpiration.Text))
+            {
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!floatConversion(txbGCRMontant.Text))
+            {
+                MessageBox.Show("Erreur : le montant entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
+            Commande commande = new Commande(valeur.ToString(), txbGCRDateCommande.Text, txbGCRMontant.Text);
+            controller.CreerCommandeRevue(commande);
+            Abonnement abonnement = new Abonnement(valeur.ToString(), null, null, txbGCRDateExpiration.Text, revue.Id);
+            controller.CreerAbonnementRevue(abonnement);
+            MessageBox.Show("La commande a été ajoutée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            lesCommandes = controller.GetAllCommandes();
+            lesAbonnements = controller.GetAbonnementsRevue(revue.Id);
+            RemplirRevuesListeAbonnements(lesAbonnements);
+        }
+
+        private void dgvCGRCommandesRevues_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            DataGridViewRow selectedRow = dgvCGRCommandesRevues.Rows[e.RowIndex];
+            if (selectedRow.Cells[0].Value != null)
+            {
+                btnGCRSupprimerCommande.Enabled = true;
+            }
+        }
+
+        private void dgvCGRCommandesRevues_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
+            lesAbonnements = controller.GetAbonnementsRevue(revue.Id);
+            string titreColonne = dgvCGRCommandesRevues.Columns[e.ColumnIndex].HeaderText;
+            List<Abonnement> sortedList = new List<Abonnement>();
+            switch (titreColonne)
+            {
+                case "Id":
+                    sortedList = lesAbonnements.OrderBy(o => o.Id).ToList();
+                    break;
+                case "DateCommande":
+                    sortedList = lesAbonnements.OrderBy(o => o.DateCommande).ToList();
+                    break;
+                case "Montant":
+                    sortedList = lesAbonnements.OrderBy(o => o.Montant).ToList();
+                    break;
+                case "DateFinAbonnement":
+                    sortedList = lesAbonnements.OrderBy(o => o.DateFinAbonnement).ToList();
+                    break;
+            }
+            RemplirRevuesListeAbonnements(sortedList);
+        }
+
+        private void btnGCRSupprimerCommande_Click(object sender, EventArgs e)
+        {
+            List<Exemplaire> lesExemplaires = new List<Exemplaire>();
+            lesExemplaires = controller.GetExemplairesRevue(cbxGCRNumeroDocument.SelectedItem.ToString());
+            foreach (Exemplaire exemplaire in lesExemplaires)
+            {
+                if (!dateConversion(txbGCRDateCommande.Text) || !dateConversion(txbGCRDateExpiration.Text) || !dateConversion(exemplaire.DateAchat.ToString()))
+                {
+                    DateTime dateCom = DateTime.ParseExact(txbGCRDateCommande.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    DateTime dateExp = DateTime.ParseExact(txbGCRDateExpiration.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    DateTime datePar = DateTime.ParseExact(exemplaire.DateAchat.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    if (ParutionDansAbonnement(dateCom, dateExp, datePar))
+                    {
+                        MessageBox.Show("Erreur : un exemplaire est rattaché.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirmation == DialogResult.Yes)
+            {
+                Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGRCommandesRevues.CurrentRow.Cells[0].Value));
+                controller.SupprimerCommande(laCommande);
+                MessageBox.Show("La commande a été supprimée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
+                lesCommandes = controller.GetAllCommandes();
+                lesAbonnements = controller.GetAbonnementsRevue(revue.Id);
+                RemplirRevuesListeAbonnements(lesAbonnements);
+            }
+        }
+
+        public bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateExpiration, DateTime dateParution)
+        {
+            if (dateParution >  dateCommande && dateParution < dateExpiration) {
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            FrmAlerteAbonnements fenetre = new FrmAlerteAbonnements();
+            fenetre.Show();
+        }
     }
 }
