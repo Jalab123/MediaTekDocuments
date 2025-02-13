@@ -33,12 +33,10 @@ namespace MediaTekDocuments.view
 
         private void RemplirDGVAA()
         {
-            List<Abonnement> lab = new List<Abonnement>();
-            lab = controller.GetDerniersAbonnements();
+            List<Abonnement> lab = controller.GetDerniersAbonnements();
             foreach (Abonnement a in lab)
             {
-                List<Document> doc = new List<Document>();
-                doc = controller.GetDocument(a.IdRevue);
+                List<Document>  doc = controller.GetDocument(a.IdRevue);
                 foreach (Document d in doc)
                 {
                     dgvAA.Rows.Add(d.Titre.ToString(), a.DateFinAbonnement.ToString());

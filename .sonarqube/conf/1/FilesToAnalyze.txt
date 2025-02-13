@@ -1,0 +1,2 @@
+﻿C:\mediatekdocuments\MediaTekDocumentsTests\Properties\AssemblyInfo.cs
+C:\mediatekdocuments\MediaTekDocumentsTests\view\FrmMediatekTests.cs

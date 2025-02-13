@@ -16,6 +16,9 @@ namespace MediaTekDocuments.view
     {
         private readonly FrmAuthentificationController controller;
         private int niveauDroits = 0;
+
+        private const string ERREUR = "Erreur";
+
         public FrmAuthentification()
         {
             InitializeComponent();
@@ -26,35 +29,33 @@ namespace MediaTekDocuments.view
         {
             if (txbLogin.Text == "" || txbPwd.Text == "")
             {
-                MessageBox.Show("Erreur : veuillez remplir tous les champs.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez remplir tous les champs.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            List<Utilisateur> utilisateur = new List<Utilisateur>();
-            utilisateur = controller.GetUtilisateur(txbLogin.Text, txbPwd.Text);
+            List<Utilisateur> utilisateur = controller.GetUtilisateur(txbLogin.Text, txbPwd.Text);
             // Login / Pwd incorrect
             if (utilisateur.Count == 0)
             {
                 Console.WriteLine("Utilisateur pas reconnu.");
-                MessageBox.Show("Erreur : nom d'utilisateur ou mot de passe incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : nom d'utilisateur ou mot de passe incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             // Succès
             else if (utilisateur.Count == 1)
             {
                 Console.WriteLine("Utilisateur connecté.");
-                niveauDroits = calculNiveauDroits(utilisateur.First());
+                niveauDroits = calculNiveauDroits(utilisateur[0]);
             }
             // Compte relié à plusieurs services
             else
             {
                 Console.WriteLine("Problème technique.");
-                MessageBox.Show("Erreur : veuillez contacter un administrateur.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez contacter un administrateur.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (niveauDroits == 0)
             {
-                MessageBox.Show("Erreur : vous n'avez pas la permission d'accéder à l'application.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show("Erreur : vous n'avez pas la permission d'accéder à l'application.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
             } else {
                 this.Visible = false;
                 FrmMediatek fenetre = new FrmMediatek(niveauDroits);
