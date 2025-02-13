@@ -1,2 +1,3 @@
 ﻿C:\mediatekdocuments\MediaTekDocumentsTests\Properties\AssemblyInfo.cs
 C:\mediatekdocuments\MediaTekDocumentsTests\view\FrmMediatekTests.cs
+C:\mediatekdocuments\MediaTekDocumentsTests\app.config
