@@ -23,7 +23,18 @@ namespace MediaTekDocuments.view
         private readonly BindingSource bdgPublics = new BindingSource();
         private readonly BindingSource bdgRayons = new BindingSource();
 
-        private int niveauDroits;
+        private readonly int niveauDroits;
+
+        private const string NUMERO_INTROUVABLE = "numéro introuvable";
+        private const string ERREUR = "Erreur";
+        private const string ERREUR_PERMISSIONS = "Erreur : permissions insuffisantes.";
+        private const string EN_COURS = "En cours";
+        private const string SUCCES = "Succès";
+        private const string LIVREE = "Livrée";
+        private const string RELANCEE = "Relancée";
+        private const string REGLEE = "Réglée";
+        private const string CONFIRMATION = "Confirmation";
+        private const string FORMAT_DATE = "yyyy-MM-dd";
 
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
@@ -33,7 +44,7 @@ namespace MediaTekDocuments.view
             InitializeComponent();
             this.controller = new FrmMediatekController();
             this.niveauDroits = niveauDroits;
-            if (niveauDroits == 2 && controller.GetDerniersAbonnements().Count() != 0)
+            if (niveauDroits == 2 && controller.GetDerniersAbonnements().Any())
             {
                 FrmAlerteAbonnements fenetre = new FrmAlerteAbonnements();
                 fenetre.ShowDialog();
@@ -52,7 +63,7 @@ namespace MediaTekDocuments.view
         /// <param name="lesCategories">liste des objets de type Genre ou Public ou Rayon</param>
         /// <param name="bdg">bindingsource contenant les informations</param>
         /// <param name="cbx">combobox à remplir</param>
-        public void RemplirComboCategorie(List<Categorie> lesCategories, BindingSource bdg, ComboBox cbx)
+        public static void RemplirComboCategorie(List<Categorie> lesCategories, BindingSource bdg, ComboBox cbx)
         {
             bdg.DataSource = lesCategories;
             cbx.DataSource = bdg;
@@ -122,7 +133,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NUMERO_INTROUVABLE);
                     RemplirLivresListeComplete();
                 }
             }
@@ -437,7 +448,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NUMERO_INTROUVABLE);
                     RemplirDvdListeComplete();
                 }
             }
@@ -751,7 +762,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NUMERO_INTROUVABLE);
                     RemplirRevuesListeComplete();
                 }
             }
@@ -1059,7 +1070,7 @@ namespace MediaTekDocuments.view
                 }
                 else
                 {
-                    MessageBox.Show("numéro introuvable");
+                    MessageBox.Show(NUMERO_INTROUVABLE);
                 }
             }
         }
@@ -1189,7 +1200,7 @@ namespace MediaTekDocuments.view
                     }
                     else
                     {
-                        MessageBox.Show("numéro de publication déjà existant", "Erreur");
+                        MessageBox.Show("numéro de publication déjà existant", ERREUR);
                     }
                 }
                 catch
@@ -1277,8 +1288,7 @@ namespace MediaTekDocuments.view
         /// <param name="livres">liste de livres</param>
         private void RemplirCbxNumeroDocument(List<Livre> livres)
         {
-            List<Livre> sortedList = new List<Livre>();
-            sortedList = livres.OrderBy(o => o.Id).ToList();
+            List<Livre> sortedList = livres.OrderBy(o => o.Id).ToList();
             foreach (Livre livre in sortedList)
             {
                 cbxGCLNumeroDocument.Items.Add(livre.Id);
@@ -1289,10 +1299,9 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            //MessageBox.Show(cbxGCLNumeroDocument.SelectedItem.ToString(), "Information");
             Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
             txbGCLISBN.Text = livre.Isbn.ToString();
             txbGCLTitre.Text = livre.Titre.ToString();
@@ -1302,10 +1311,7 @@ namespace MediaTekDocuments.view
             txbGCLPublic.Text = livre.Public.ToString();
             txbGCLRayon.Text = livre.Rayon.ToString();
             txbGCLCheminImg.Text = livre.Image.ToString();
-            //lesCommandes = controller.GetAllCommandes();
-            //lesCommandeDocuments = controller.GetAllCommandeDocuments();
-            //lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
-            lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(livre.Id);
             RemplirLivresListeCommandes(lesCommandeDocuments);
             cbxGCLStatut.SelectedIndex = -1;
             cbxGCLStatut.Items.Clear();
@@ -1349,47 +1355,46 @@ namespace MediaTekDocuments.view
             Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (livre == null)
             {
-                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (txbGCLDateCommande.Text == "" || txbGCLMontant.Text == "" || txbGCLNbExemplaire.Text == "")
             {
-                MessageBox.Show("Erreur : veuillez remplir tous les champs.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez remplir tous les champs.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!dateConversion(txbGCLDateCommande.Text))
+            if (!DateConversion(txbGCLDateCommande.Text))
             {
-                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!floatConversion(txbGCLMontant.Text))
+            if (!FloatConversion(txbGCLMontant.Text))
             {
-                MessageBox.Show("Erreur : le montant entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le montant entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!intConversion(txbGCLNbExemplaire.Text))
+            if (!IntConversion(txbGCLNbExemplaire.Text))
             {
-                MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            //Console.WriteLine(cbxGCLNumeroDocument.SelectedItem);
             int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
             Commande commande = new Commande(valeur.ToString(), txbGCLDateCommande.Text, txbGCLMontant.Text);
-            controller.CreerCommandeLivre(commande);
+            controller.CreerCommande(commande);
             int valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
-            Suivi suivi = new Suivi(valeur2.ToString(), "En cours");
+            Suivi suivi = new Suivi(valeur2.ToString(), EN_COURS);
             controller.CreerSuivi(suivi);
             CommandeDocument commandeDocument = new CommandeDocument(valeur.ToString(), livre.Id, valeur2.ToString(), null, null, txbGCLNbExemplaire.Text, null);
-            controller.CreerCommandeDocumentsLivre(commandeDocument);
-            MessageBox.Show("La commande a été ajoutée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            controller.CreerCommandeDocumentsLivreDvd(commandeDocument);
+            MessageBox.Show("La commande a été ajoutée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
             lesCommandes = controller.GetAllCommandes();
             lesSuivis = controller.GetAllSuivis();
-            lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(livre.Id);
             RemplirLivresListeCommandes(lesCommandeDocuments);
         }
 
@@ -1403,36 +1408,36 @@ namespace MediaTekDocuments.view
                 string contenu = selectedRow.Cells[6].Value.ToString();
                 switch (contenu)
                 {
-                    case "En cours":
+                    case EN_COURS:
                         lblGCLStatut.Enabled = true;
                         cbxGCLStatut.Enabled = true;
                         btnGCLModifierStatut.Enabled = true;
-                        cbxGCLStatut.Items.Add("En cours");
-                        cbxGCLStatut.Items.Add("Livrée");
-                        cbxGCLStatut.Items.Add("Relancée");
+                        cbxGCLStatut.Items.Add(EN_COURS);
+                        cbxGCLStatut.Items.Add(LIVREE);
+                        cbxGCLStatut.Items.Add(RELANCEE);
                         cbxGCLStatut.SelectedIndex = 0;
                         btnCGLSupprimerCommande.Enabled = true;
                         break;
-                    case "Livrée":
+                    case LIVREE:
                         lblGCLStatut.Enabled = true;
                         cbxGCLStatut.Enabled = true;
                         btnGCLModifierStatut.Enabled = true;
-                        cbxGCLStatut.Items.Add("Livrée");
-                        cbxGCLStatut.Items.Add("Réglée");
+                        cbxGCLStatut.Items.Add(LIVREE);
+                        cbxGCLStatut.Items.Add(REGLEE);
                         cbxGCLStatut.SelectedIndex = 0;
                         btnCGLSupprimerCommande.Enabled = false;
                         break;
-                    case "Relancée":
+                    case RELANCEE:
                         lblGCLStatut.Enabled = true;
                         cbxGCLStatut.Enabled = true;
                         btnGCLModifierStatut.Enabled = true;
-                        cbxGCLStatut.Items.Add("Relancée");
-                        cbxGCLStatut.Items.Add("En cours");
-                        cbxGCLStatut.Items.Add("Livrée");
+                        cbxGCLStatut.Items.Add(RELANCEE);
+                        cbxGCLStatut.Items.Add(EN_COURS);
+                        cbxGCLStatut.Items.Add(LIVREE);
                         cbxGCLStatut.SelectedIndex = 0;
                         btnCGLSupprimerCommande.Enabled = true;
                         break;
-                    case "Réglée":
+                    case REGLEE:
                         lblGCLStatut.Enabled = false;
                         cbxGCLStatut.Enabled = false;
                         btnGCLModifierStatut.Enabled = false;
@@ -1452,7 +1457,7 @@ namespace MediaTekDocuments.view
         private void dgvCGLCommandesLivre_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
-            lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(livre.Id);
             string titreColonne = dgvCGLCommandesLivre.Columns[e.ColumnIndex].HeaderText;
             List<CommandeDocument> sortedList = new List<CommandeDocument>();
             switch (titreColonne)
@@ -1480,20 +1485,20 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCLStatut.SelectedItem.ToString() + ")", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCLStatut.SelectedItem.ToString() + ")", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmation == DialogResult.Yes)
             {
                 Suivi leSuivi = lesSuivis.Find(x => x.Id.Equals(dgvCGLCommandesLivre.CurrentRow.Cells[2].Value));
                 leSuivi.Statut = cbxGCLStatut.SelectedItem.ToString();
                 controller.ModifierSuivi(leSuivi);
-                MessageBox.Show("Le statut de la commande a été modifié avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Le statut de la commande a été modifié avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
                 lesCommandes = controller.GetAllCommandes();
                 lesSuivis = controller.GetAllSuivis();
-                lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+                lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(livre.Id);
                 RemplirLivresListeCommandes(lesCommandeDocuments);
             }
         }
@@ -1502,36 +1507,31 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() != "Livrée")
+            if (dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() != LIVREE)
             {
-                DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirmation == DialogResult.Yes)
                 {
-                    //Console.WriteLine("Test");
-                    //Console.WriteLine(dgvCGLCommandesLivre.CurrentRow.Cells[0].Value.ToString());
                     Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGLCommandesLivre.CurrentRow.Cells[0].Value));
-                    //Console.WriteLine(laCommande.ToString());
                     controller.SupprimerCommande(laCommande);
-                    //CommandeDocument laCommandeDocument = lesCommandeDocuments.Find(x => x.Id.Equals(dgvCGLCommandesLivre.CurrentRow.Cells[0].Value));
-                    //controller.SupprimerCommandeDocument(laCommandeDocument);
-                    MessageBox.Show("La commande a été supprimée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("La commande a été supprimée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
                     lesCommandes = controller.GetAllCommandes();
                     lesSuivis = controller.GetAllSuivis();
-                    lesCommandeDocuments = controller.GetCommandeDocumentsLivre(livre.Id);
+                    lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(livre.Id);
                     RemplirLivresListeCommandes(lesCommandeDocuments);
                 }
             }
         }
 
-        public bool dateConversion(string dateString)
+        public static bool DateConversion(string dateString)
         {
             try
             {
-                DateTime conversion = DateTime.ParseExact(dateString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                DateTime.ParseExact(dateString, FORMAT_DATE, CultureInfo.InvariantCulture);
                 return true;
             } catch
             {
@@ -1539,29 +1539,14 @@ namespace MediaTekDocuments.view
             }
         }
 
-        public bool intConversion(string intString)
+        public static bool IntConversion(string intString)
         {
-            try
-            {
-                int conversion = int.Parse(intString);
-                return true;
-            } catch
-            {
-                return false;
-            }
+            return int.TryParse(intString, out _);
         }
 
-        public bool floatConversion(string floatString)
+        public static bool FloatConversion(string floatString)
         {
-            try
-            {
-                float conversion = float.Parse(floatString);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return float.TryParse(floatString, out _);
         }
 
         #endregion
@@ -1584,8 +1569,7 @@ namespace MediaTekDocuments.view
         /// <param name="livres">liste de livres</param>
         private void RemplirCbxDvdNumeroDocument(List<Dvd> dvds)
         {
-            List<Dvd> sortedList = new List<Dvd>();
-            sortedList = dvds.OrderBy(o => o.Id).ToList();
+            List<Dvd> sortedList = dvds.OrderBy(o => o.Id).ToList();
             foreach (Dvd dvd in sortedList)
             {
                 cbxGCDNumeroDocument.Items.Add(dvd.Id);
@@ -1596,7 +1580,7 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
@@ -1608,7 +1592,7 @@ namespace MediaTekDocuments.view
             txbGCDPublic.Text = dvd.Public.ToString();
             txbGCDRayon.Text = dvd.Rayon.ToString();
             txbGCDCheminImg.Text = dvd.Image.ToString();
-            lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(dvd.Id);
             RemplirDvdsListeCommandes(lesCommandeDocuments);
             cbxGCDStatut.SelectedIndex = -1;
             cbxGCDStatut.Items.Clear();
@@ -1652,46 +1636,46 @@ namespace MediaTekDocuments.view
             Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
             if (dvd == null)
             {
-                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (txbGCDDateCommande.Text == "" || txbGCDMontant.Text == "" || txbGCDNbExemplaire.Text == "")
             {
-                MessageBox.Show("Erreur : veuillez remplir tous les champs.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez remplir tous les champs.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!dateConversion(txbGCDDateCommande.Text))
+            if (!DateConversion(txbGCDDateCommande.Text))
             {
-                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!floatConversion(txbGCDMontant.Text))
+            if (!FloatConversion(txbGCDMontant.Text))
             {
-                MessageBox.Show("Erreur : le montant entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le montant entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!intConversion(txbGCDNbExemplaire.Text))
+            if (!IntConversion(txbGCDNbExemplaire.Text))
             {
-                MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
             Commande commande = new Commande(valeur.ToString(), txbGCDDateCommande.Text, txbGCDMontant.Text);
-            controller.CreerCommandeDvd(commande);
+            controller.CreerCommande(commande);
             int valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
-            Suivi suivi = new Suivi(valeur2.ToString(), "En cours");
+            Suivi suivi = new Suivi(valeur2.ToString(), EN_COURS);
             controller.CreerSuivi(suivi);
             CommandeDocument commandeDocument = new CommandeDocument(valeur.ToString(), dvd.Id, valeur2.ToString(), null, null, txbGCDNbExemplaire.Text, null);
-            controller.CreerCommandeDocumentsDvd(commandeDocument);
-            MessageBox.Show("La commande a été ajoutée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            controller.CreerCommandeDocumentsLivreDvd(commandeDocument);
+            MessageBox.Show("La commande a été ajoutée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
             lesCommandes = controller.GetAllCommandes();
             lesSuivis = controller.GetAllSuivis();
-            lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(dvd.Id);
             RemplirDvdsListeCommandes(lesCommandeDocuments);
         }
 
@@ -1705,36 +1689,36 @@ namespace MediaTekDocuments.view
                 string contenu = selectedRow.Cells[6].Value.ToString();
                 switch (contenu)
                 {
-                    case "En cours":
+                    case EN_COURS:
                         lblGCDStatut.Enabled = true;
                         cbxGCDStatut.Enabled = true;
                         btnGCDModifierStatut.Enabled = true;
-                        cbxGCDStatut.Items.Add("En cours");
-                        cbxGCDStatut.Items.Add("Livrée");
-                        cbxGCDStatut.Items.Add("Relancée");
+                        cbxGCDStatut.Items.Add(EN_COURS);
+                        cbxGCDStatut.Items.Add(LIVREE);
+                        cbxGCDStatut.Items.Add(RELANCEE);
                         cbxGCDStatut.SelectedIndex = 0;
                         btnGCDSupprimerCommande.Enabled = true;
                         break;
-                    case "Livrée":
+                    case LIVREE:
                         lblGCDStatut.Enabled = true;
                         cbxGCDStatut.Enabled = true;
                         btnGCDModifierStatut.Enabled = true;
-                        cbxGCDStatut.Items.Add("Livrée");
-                        cbxGCDStatut.Items.Add("Réglée");
+                        cbxGCDStatut.Items.Add(LIVREE);
+                        cbxGCDStatut.Items.Add(REGLEE);
                         cbxGCDStatut.SelectedIndex = 0;
                         btnGCDSupprimerCommande.Enabled = false;
                         break;
-                    case "Relancée":
+                    case RELANCEE:
                         lblGCDStatut.Enabled = true;
                         cbxGCDStatut.Enabled = true;
                         btnGCDModifierStatut.Enabled = true;
-                        cbxGCDStatut.Items.Add("Relancée");
-                        cbxGCDStatut.Items.Add("En cours");
-                        cbxGCDStatut.Items.Add("Livrée");
+                        cbxGCDStatut.Items.Add(RELANCEE);
+                        cbxGCDStatut.Items.Add(EN_COURS);
+                        cbxGCDStatut.Items.Add(LIVREE);
                         cbxGCDStatut.SelectedIndex = 0;
                         btnGCDSupprimerCommande.Enabled = true;
                         break;
-                    case "Réglée":
+                    case REGLEE:
                         lblGCDStatut.Enabled = false;
                         cbxGCDStatut.Enabled = false;
                         btnGCDModifierStatut.Enabled = false;
@@ -1754,7 +1738,7 @@ namespace MediaTekDocuments.view
         private void dgvCGDCommandesDvd_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
-            lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+            lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(dvd.Id);
             string titreColonne = dgvCGDCommandesDvd.Columns[e.ColumnIndex].HeaderText;
             List<CommandeDocument> sortedList = new List<CommandeDocument>();
             switch (titreColonne)
@@ -1782,20 +1766,20 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCDStatut.SelectedItem.ToString() + ")", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir modifier le statut de cette commande? (" + dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() + " -> " + cbxGCDStatut.SelectedItem.ToString() + ")", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmation == DialogResult.Yes)
             {
                 Suivi leSuivi = lesSuivis.Find(x => x.Id.Equals(dgvCGDCommandesDvd.CurrentRow.Cells[2].Value));
                 leSuivi.Statut = cbxGCDStatut.SelectedItem.ToString();
                 controller.ModifierSuivi(leSuivi);
-                MessageBox.Show("Le statut de la commande a été modifié avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Le statut de la commande a été modifié avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
                 lesCommandes = controller.GetAllCommandes();
                 lesSuivis = controller.GetAllSuivis();
-                lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+                lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(dvd.Id);
                 RemplirDvdsListeCommandes(lesCommandeDocuments);
             }
         }
@@ -1804,21 +1788,21 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() != "Livrée")
+            if (dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() != LIVREE)
             {
-                DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirmation == DialogResult.Yes)
                 {
                     Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGDCommandesDvd.CurrentRow.Cells[0].Value));
                     controller.SupprimerCommande(laCommande);
-                    MessageBox.Show("La commande a été supprimée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("La commande a été supprimée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
                     lesCommandes = controller.GetAllCommandes();
                     lesSuivis = controller.GetAllSuivis();
-                    lesCommandeDocuments = controller.GetCommandeDocumentsDvd(dvd.Id);
+                    lesCommandeDocuments = controller.GetCommandeDocumentsLivreDvd(dvd.Id);
                     RemplirDvdsListeCommandes(lesCommandeDocuments);
                 }
             }
@@ -1847,8 +1831,7 @@ namespace MediaTekDocuments.view
         /// <param name="livres">liste de livres</param>
         private void RemplirCbxRevuesNumeroDocument(List<Revue> revues)
         {
-            List<Revue> sortedList = new List<Revue>();
-            sortedList = revues.OrderBy(o => o.Id).ToList();
+            List<Revue> sortedList = revues.OrderBy(o => o.Id).ToList();
             foreach (Revue revue in sortedList)
             {
                 cbxGCRNumeroDocument.Items.Add(revue.Id);
@@ -1859,7 +1842,7 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
@@ -1902,35 +1885,35 @@ namespace MediaTekDocuments.view
             Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (revue == null)
             {
-                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez saisir un Numéro de document valide.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (txbGCRDateCommande.Text == "" || txbGCRMontant.Text == "" || txbGCRDateExpiration.Text == "")
             {
-                MessageBox.Show("Erreur : veuillez remplir tous les champs.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : veuillez remplir tous les champs.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!dateConversion(txbGCRDateCommande.Text) || !dateConversion(txbGCRDateExpiration.Text))
+            if (!DateConversion(txbGCRDateCommande.Text) || !DateConversion(txbGCRDateExpiration.Text))
             {
-                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!floatConversion(txbGCRMontant.Text))
+            if (!FloatConversion(txbGCRMontant.Text))
             {
-                MessageBox.Show("Erreur : le montant entré est incorrect.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le montant entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
             Commande commande = new Commande(valeur.ToString(), txbGCRDateCommande.Text, txbGCRMontant.Text);
-            controller.CreerCommandeRevue(commande);
+            controller.CreerCommande(commande);
             Abonnement abonnement = new Abonnement(valeur.ToString(), null, null, txbGCRDateExpiration.Text, revue.Id);
             controller.CreerAbonnementRevue(abonnement);
-            MessageBox.Show("La commande a été ajoutée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("La commande a été ajoutée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
             lesCommandes = controller.GetAllCommandes();
             lesAbonnements = controller.GetAbonnementsRevue(revue.Id);
             RemplirRevuesListeAbonnements(lesAbonnements);
@@ -1973,31 +1956,27 @@ namespace MediaTekDocuments.view
         {
             if (niveauDroits < 2)
             {
-                MessageBox.Show("Erreur : permissions insuffisantes.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            List<Exemplaire> lesExemplaires = new List<Exemplaire>();
-            lesExemplaires = controller.GetExemplairesRevue(cbxGCRNumeroDocument.SelectedItem.ToString());
-            foreach (Exemplaire exemplaire in lesExemplaires)
+            List<Exemplaire> lesExemplairesRevue = controller.GetExemplairesRevue(cbxGCRNumeroDocument.SelectedItem.ToString());
+            if (!DateConversion(txbGCRDateCommande.Text) || !DateConversion(txbGCRDateExpiration.Text))
             {
-                if (!dateConversion(txbGCRDateCommande.Text) || !dateConversion(txbGCRDateExpiration.Text) || !dateConversion(exemplaire.DateAchat.ToString()))
-                {
-                    DateTime dateCom = DateTime.ParseExact(txbGCRDateCommande.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                    DateTime dateExp = DateTime.ParseExact(txbGCRDateExpiration.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                    DateTime datePar = DateTime.ParseExact(exemplaire.DateAchat.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                    if (ParutionDansAbonnement(dateCom, dateExp, datePar))
-                    {
-                        MessageBox.Show("Erreur : un exemplaire est rattaché.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                }
+                return;
             }
-            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DateTime dateCom = DateTime.ParseExact(txbGCRDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture);
+            DateTime dateExp = DateTime.ParseExact(txbGCRDateExpiration.Text, FORMAT_DATE, CultureInfo.InvariantCulture);
+            if (lesExemplairesRevue.Select(exemplaire => exemplaire.DateAchat.ToString()).Any(dateString => DateConversion(dateString) && ParutionDansAbonnement(dateCom, dateExp, DateTime.ParseExact(dateString, FORMAT_DATE, CultureInfo.InvariantCulture))))
+            {
+                MessageBox.Show("Erreur : un exemplaire est rattaché.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmation == DialogResult.Yes)
             {
                 Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGRCommandesRevues.CurrentRow.Cells[0].Value));
                 controller.SupprimerCommande(laCommande);
-                MessageBox.Show("La commande a été supprimée avec succès.", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("La commande a été supprimée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Revue revue = lesRevues.Find(x => x.Id.Equals(cbxGCRNumeroDocument.SelectedItem));
                 lesCommandes = controller.GetAllCommandes();
                 lesAbonnements = controller.GetAbonnementsRevue(revue.Id);
@@ -2005,7 +1984,7 @@ namespace MediaTekDocuments.view
             }
         }
 
-        public bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateExpiration, DateTime dateParution)
+        public static bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateExpiration, DateTime dateParution)
         {
             if (dateParution >  dateCommande && dateParution < dateExpiration) {
                 return true;

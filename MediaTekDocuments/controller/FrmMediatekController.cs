@@ -99,14 +99,9 @@ namespace MediaTekDocuments.controller
             return access.GetAllSuivis();
         }
 
-        public List<CommandeDocument> GetCommandeDocumentsLivre(string idlivredvd)
+        public List<CommandeDocument> GetCommandeDocumentsLivreDvd(string idlivredvd)
         {
-            return access.GetCommandeDocumentsLivre(idlivredvd);
-        }
-
-        public List<CommandeDocument> GetCommandeDocumentsDvd(string idlivredvd)
-        {
-            return access.GetCommandeDocumentsDvd(idlivredvd);
+            return access.GetCommandeDocumentsLivreDvd(idlivredvd);
         }
 
         public List<Abonnement> GetAbonnementsRevue(string idrevue)
@@ -129,29 +124,14 @@ namespace MediaTekDocuments.controller
             return access.GetDerniersAbonnements();
         }
 
-        public bool CreerCommandeLivre(Commande commande)
+        public bool CreerCommande(Commande commande)
         {
-            return access.CreerCommandeLivre(commande);
+            return access.CreerCommande(commande);
         }
 
-        public bool CreerCommandeDvd(Commande commande)
+        public bool CreerCommandeDocumentsLivreDvd(CommandeDocument commandeDocument)
         {
-            return access.CreerCommandeDvd(commande);
-        }
-
-        public bool CreerCommandeRevue(Commande commande)
-        {
-            return access.CreerCommandeRevue(commande);
-        }
-
-        public bool CreerCommandeDocumentsLivre(CommandeDocument commandeDocument)
-        {
-            return access.CreerCommandeDocumentsLivre(commandeDocument);
-        }
-
-        public bool CreerCommandeDocumentsDvd(CommandeDocument commandeDocument)
-        {
-            return access.CreerCommandeDocumentsDvd(commandeDocument);
+            return access.CreerCommandeDocumentsLivreDvd(commandeDocument);
         }
 
         public bool CreerAbonnementRevue(Abonnement abonnement)

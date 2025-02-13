@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
+using System.Runtime.Remoting.Messaging;
 
 namespace MediaTekDocuments.dal
 {
@@ -16,10 +17,12 @@ namespace MediaTekDocuments.dal
     /// </summary>
     public class Access
     {
+        private static readonly string connectionName = "MediaTekDocuments.Properties.Settings.mediaTekDocumentsConnectionString";
+        private static readonly string connectionUriApi = "MediaTekDocuments.Properties.Settings.mediaTekDocumentsConnectionUriApi";
         /// <summary>
         /// adresse de l'API
         /// </summary>
-        private static readonly string uriApi = "http://localhost/rest_mediatekdocuments/";
+        private static readonly string uriApi = GetConnectionStringByName(connectionUriApi);
         /// <summary>
         /// instance unique de la classe
         /// </summary>
@@ -43,7 +46,10 @@ namespace MediaTekDocuments.dal
         /// méthode HTTP pour delete
         private const string DELETE = "DELETE";
 
-        private static readonly string connectionName = "MediaTekDocuments.Properties.Settings.mediaTekDocumentsConnectionString";
+        private const string COMMANDE_DOCUMENT = "commandedocument";
+
+        private const string CHAMPS = "champs=";
+
 
         /// <summary>
         /// Méthode privée pour créer un singleton
@@ -51,11 +57,10 @@ namespace MediaTekDocuments.dal
         /// </summary>
         private Access()
         {
-            String authenticationString = null;
             try
             {
 
-                authenticationString = GetConnectionStringByName(connectionName);
+                String authenticationString = GetConnectionStringByName(connectionName);
                 api = ApiRest.GetInstance(uriApi, authenticationString);
             }
             catch (Exception e)
@@ -167,7 +172,7 @@ namespace MediaTekDocuments.dal
         /// <returns>Liste d'objets CommandeDocument</returns>
         public List<CommandeDocument> GetAllCommandeDocuments()
         {
-            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, "commandedocument", null);
+            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, COMMANDE_DOCUMENT, null);
             return lesCommandeDocuments;
         }
 
@@ -183,24 +188,17 @@ namespace MediaTekDocuments.dal
             return lesSuivis;
         }
 
-        public List<CommandeDocument> GetCommandeDocumentsLivre(string idlivredvd)
+        public List<CommandeDocument> GetCommandeDocumentsLivreDvd(string idlivredvd)
         {
-            String jsonIdCommandeDocument = convertToJson("idlivredvd", idlivredvd);
-            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, "commandedocument/" + jsonIdCommandeDocument, null);
+            String jsonIdCommandeDocument = ConvertToJson("idlivredvd", idlivredvd);
+            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, COMMANDE_DOCUMENT + "/" + jsonIdCommandeDocument, null);
             return lesCommandeDocuments;
         }
 
         public List<Document> GetDocument(string iddocument)
         {
-            String jsonIdCommandeDocument = convertToJson("id", iddocument);
+            String jsonIdCommandeDocument = ConvertToJson("id", iddocument);
             List<Document> lesCommandeDocuments = TraitementRecup<Document>(GET, "document/" + jsonIdCommandeDocument, null);
-            return lesCommandeDocuments;
-        }
-
-        public List<CommandeDocument> GetCommandeDocumentsDvd(string idlivredvd)
-        {
-            String jsonIdCommandeDocument = convertToJson("idlivredvd", idlivredvd);
-            List<CommandeDocument> lesCommandeDocuments = TraitementRecup<CommandeDocument>(GET, "commandedocument/" + jsonIdCommandeDocument, null);
             return lesCommandeDocuments;
         }
 
@@ -213,7 +211,7 @@ namespace MediaTekDocuments.dal
 
         public List<Abonnement> GetAbonnementsRevue(string idrevue)
         {
-            String jsonIdAbonnement = convertToJson("idrevue", idrevue);
+            String jsonIdAbonnement = ConvertToJson("idrevue", idrevue);
             List<Abonnement> lesAbonnements = TraitementRecup<Abonnement>(GET, "abonnement/" + jsonIdAbonnement, null);
             return lesAbonnements;
         }
@@ -226,17 +224,17 @@ namespace MediaTekDocuments.dal
         /// <returns>Liste d'objets Exemplaire</returns>
         public List<Exemplaire> GetExemplairesRevue(string idDocument)
         {
-            String jsonIdDocument = convertToJson("id", idDocument);
+            String jsonIdDocument = ConvertToJson("id", idDocument);
             List<Exemplaire> lesExemplaires = TraitementRecup<Exemplaire>(GET, "exemplaire/" + jsonIdDocument, null);
             return lesExemplaires;
         }
 
-        public bool CreerCommandeLivre(Commande commande)
+        public bool CreerCommande(Commande commande)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(commande);
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonExemplaire);
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -246,57 +244,12 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
-        public bool CreerCommandeDvd(Commande commande)
-        {
-            String jsonExemplaire = JsonConvert.SerializeObject(commande);
-            try
-            {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonExemplaire);
-                return (liste != null);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return false;
-        }
-
-        public bool CreerCommandeRevue(Commande commande)
-        {
-            String jsonExemplaire = JsonConvert.SerializeObject(commande);
-            try
-            {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonExemplaire);
-                return (liste != null);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return false;
-        }
-
-        public bool CreerCommandeDocumentsLivre(CommandeDocument commandeDocument)
+        public bool CreerCommandeDocumentsLivreDvd(CommandeDocument commandeDocument)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandedocument", "champs=" + jsonExemplaire);
-                return (liste != null);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return false;
-        }
-
-        public bool CreerCommandeDocumentsDvd(CommandeDocument commandeDocument)
-        {
-            String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
-            try
-            {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commandedocument", "champs=" + jsonExemplaire);
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, COMMANDE_DOCUMENT, CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -311,7 +264,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(abonnement);
             try
             {
-                List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "abonnement", "champs=" + jsonExemplaire);
+                List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "abonnement", CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -326,7 +279,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(suivi);
             try
             {
-                List<Suivi> liste = TraitementRecup<Suivi>(POST, "suivi", "champs=" + jsonExemplaire);
+                List<Suivi> liste = TraitementRecup<Suivi>(POST, "suivi", CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -341,7 +294,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(suivi);
             try
             {
-                List<Suivi> liste = TraitementRecup<Suivi>(DELETE, "suivi", "champs=" + jsonExemplaire);
+                List<Suivi> liste = TraitementRecup<Suivi>(DELETE, "suivi", CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -356,7 +309,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(suivi);
             try
             {
-                List<Suivi> liste = TraitementRecup<Suivi>(PUT, "suivi", "champs=" + jsonExemplaire);
+                List<Suivi> liste = TraitementRecup<Suivi>(PUT, "suivi", CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -387,7 +340,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commandedocument", "champs=" + jsonExemplaire);
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, COMMANDE_DOCUMENT, CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -407,7 +360,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
             try
             {
-                List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", "champs=" + jsonExemplaire);
+                List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", CHAMPS + jsonExemplaire);
                 return (liste != null);
             }
             catch (Exception ex)
@@ -462,10 +415,9 @@ namespace MediaTekDocuments.dal
         /// <param name="nom"></param>
         /// <param name="valeur"></param>
         /// <returns>couple au format json</returns>
-        private String convertToJson(Object nom, Object valeur)
+        private static String ConvertToJson(Object nom, Object valeur)
         {
-            Dictionary<Object, Object> dictionary = new Dictionary<Object, Object>();
-            dictionary.Add(nom, valeur);
+            var dictionary = new Dictionary<object, object> { { nom, valeur } };
             return JsonConvert.SerializeObject(dictionary);
         }
 
