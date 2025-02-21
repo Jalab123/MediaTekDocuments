@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.Text;
 
 namespace MediaTekDocuments.view
 
@@ -23,6 +24,10 @@ namespace MediaTekDocuments.view
         private readonly BindingSource bdgPublics = new BindingSource();
         private readonly BindingSource bdgRayons = new BindingSource();
 
+        private List<Commande> lesCommandes = new List<Commande>();
+        private List<CommandeDocument> lesCommandeDocuments = new List<CommandeDocument>();
+        private List<Suivi> lesSuivis = new List<Suivi>();        
+
         private readonly int niveauDroits;
 
         private const string NUMERO_INTROUVABLE = "numéro introuvable";
@@ -34,12 +39,12 @@ namespace MediaTekDocuments.view
         private const string RELANCEE = "Relancée";
         private const string REGLEE = "Réglée";
         private const string CONFIRMATION = "Confirmation";
-        private const string FORMAT_DATE = "yyyy-MM-dd";
+        private const string FORMAT_DATE = "dd/MM/yyyy";
 
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
         /// </summary>
-        internal FrmMediatek(int niveauDroits)
+        public FrmMediatek(int niveauDroits)
         {
             InitializeComponent();
             this.controller = new FrmMediatekController();
@@ -71,6 +76,54 @@ namespace MediaTekDocuments.view
             {
                 cbx.SelectedIndex = -1;
             }
+        }
+
+        public static string ConvertId(string id)
+        {
+            int c = 5 - id.Length;
+            if (c > 0)
+            {
+                StringBuilder bld = new StringBuilder();
+                for (int i = 0; i < c; i++)
+                {
+                    bld.Append("0");
+                }
+                bld.Append(id);
+                return bld.ToString();
+            }
+            return id;
+        }
+
+        public static bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateExpiration, DateTime dateParution)
+        {
+            if (dateParution > dateCommande && dateParution < dateExpiration)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool DateConversion(string dateString, string format)
+        {
+            try
+            {
+                DateTime.ParseExact(dateString, format, CultureInfo.InvariantCulture);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IntConversion(string intString)
+        {
+            return int.TryParse(intString, out _);
+        }
+
+        public static bool FloatConversion(string floatString)
+        {
+            return float.TryParse(floatString, out _);
         }
         #endregion
 
@@ -387,6 +440,7 @@ namespace MediaTekDocuments.view
             }
             RemplirLivresListe(sortedList);
         }
+
         #endregion
 
         #region Onglet Dvd
@@ -1268,9 +1322,6 @@ namespace MediaTekDocuments.view
         #endregion
 
         #region Onglet Gestion Commandes Livres
-        private List<Commande> lesCommandes = new List<Commande>();
-        private List<CommandeDocument> lesCommandeDocuments = new List<CommandeDocument>();
-        private List<Suivi> lesSuivis = new List<Suivi>();
 
         private readonly BindingSource bdgLivresListeCommandes = new BindingSource();
 
@@ -1368,9 +1419,9 @@ namespace MediaTekDocuments.view
                 MessageBox.Show("Erreur : veuillez remplir tous les champs.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!DateConversion(txbGCLDateCommande.Text))
+            if (!DateConversion(txbGCLDateCommande.Text, FORMAT_DATE))
             {
-                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: JJ/MM/AAAA).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (!FloatConversion(txbGCLMontant.Text))
@@ -1383,13 +1434,21 @@ namespace MediaTekDocuments.view
                 MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
-            Commande commande = new Commande(valeur.ToString(), txbGCLDateCommande.Text, txbGCLMontant.Text);
+            int valeur = 0;
+            if (lesCommandes.Count != 0)
+            {
+                valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
+            }
+            Commande commande = new Commande(ConvertId(valeur.ToString()), DateTime.ParseExact(txbGCLDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture), int.Parse(txbGCLMontant.Text));
             controller.CreerCommande(commande);
-            int valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
-            Suivi suivi = new Suivi(valeur2.ToString(), EN_COURS);
+            int valeur2 = 0;
+            if (lesSuivis.Count != 0)
+            {
+                valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
+            }
+            Suivi suivi = new Suivi(ConvertId(valeur2.ToString()), EN_COURS);
             controller.CreerSuivi(suivi);
-            CommandeDocument commandeDocument = new CommandeDocument(valeur.ToString(), livre.Id, valeur2.ToString(), null, null, txbGCLNbExemplaire.Text, null);
+            CommandeDocument commandeDocument = new CommandeDocument(ConvertId(valeur.ToString()), livre.Id, ConvertId(valeur2.ToString()), DateTime.ParseExact(txbGCLDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture), int.Parse(txbGCLMontant.Text), int.Parse(txbGCLNbExemplaire.Text), null);
             controller.CreerCommandeDocumentsLivreDvd(commandeDocument);
             MessageBox.Show("La commande a été ajoutée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
             lesCommandes = controller.GetAllCommandes();
@@ -1527,28 +1586,6 @@ namespace MediaTekDocuments.view
             }
         }
 
-        public static bool DateConversion(string dateString)
-        {
-            try
-            {
-                DateTime.ParseExact(dateString, FORMAT_DATE, CultureInfo.InvariantCulture);
-                return true;
-            } catch
-            {
-                return false;
-            }
-        }
-
-        public static bool IntConversion(string intString)
-        {
-            return int.TryParse(intString, out _);
-        }
-
-        public static bool FloatConversion(string floatString)
-        {
-            return float.TryParse(floatString, out _);
-        }
-
         #endregion
 
         #region Onglet Gestion Commandes Dvd
@@ -1649,9 +1686,9 @@ namespace MediaTekDocuments.view
                 MessageBox.Show("Erreur : veuillez remplir tous les champs.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!DateConversion(txbGCDDateCommande.Text))
+            if (!DateConversion(txbGCDDateCommande.Text, FORMAT_DATE))
             {
-                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: JJ/MM/AAAA).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (!FloatConversion(txbGCDMontant.Text))
@@ -1664,13 +1701,21 @@ namespace MediaTekDocuments.view
                 MessageBox.Show("Erreur : le nombre d'exemplaires entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
-            Commande commande = new Commande(valeur.ToString(), txbGCDDateCommande.Text, txbGCDMontant.Text);
+            int valeur = 0;
+            if (lesCommandes.Count != 0)
+            {
+                valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
+            }
+            Commande commande = new Commande(ConvertId(valeur.ToString()), DateTime.ParseExact(txbGCDDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture), int.Parse(txbGCDMontant.Text));
             controller.CreerCommande(commande);
-            int valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
-            Suivi suivi = new Suivi(valeur2.ToString(), EN_COURS);
+            int valeur2 = 0;
+            if (lesSuivis.Count != 0)
+            {
+                valeur2 = int.Parse(lesSuivis[lesSuivis.Count - 1].Id) + 1;
+            }
+            Suivi suivi = new Suivi(ConvertId(valeur2.ToString()), EN_COURS);
             controller.CreerSuivi(suivi);
-            CommandeDocument commandeDocument = new CommandeDocument(valeur.ToString(), dvd.Id, valeur2.ToString(), null, null, txbGCDNbExemplaire.Text, null);
+            CommandeDocument commandeDocument = new CommandeDocument(ConvertId(valeur.ToString()), dvd.Id, ConvertId(valeur2.ToString()), DateTime.ParseExact(txbGCDDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture), int.Parse(txbGCDMontant.Text), int.Parse(txbGCDNbExemplaire.Text), null);
             controller.CreerCommandeDocumentsLivreDvd(commandeDocument);
             MessageBox.Show("La commande a été ajoutée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
             lesCommandes = controller.GetAllCommandes();
@@ -1898,9 +1943,9 @@ namespace MediaTekDocuments.view
                 MessageBox.Show("Erreur : veuillez remplir tous les champs.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!DateConversion(txbGCRDateCommande.Text) || !DateConversion(txbGCRDateExpiration.Text))
+            if (!DateConversion(txbGCRDateCommande.Text, FORMAT_DATE) || !DateConversion(txbGCRDateExpiration.Text, FORMAT_DATE))
             {
-                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: AAAA-MM-JJ).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Erreur : le format de la date est incorrect (attendu: JJ/MM/AAAA).", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (!FloatConversion(txbGCRMontant.Text))
@@ -1908,10 +1953,14 @@ namespace MediaTekDocuments.view
                 MessageBox.Show("Erreur : le montant entré est incorrect.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            int valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
-            Commande commande = new Commande(valeur.ToString(), txbGCRDateCommande.Text, txbGCRMontant.Text);
+            int valeur = 0;
+            if (lesCommandes.Count != 0)
+            {
+                valeur = int.Parse(lesCommandes[lesCommandes.Count - 1].Id) + 1;
+            }
+            Commande commande = new Commande(ConvertId(valeur.ToString()), DateTime.ParseExact(txbGCRDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture), int.Parse(txbGCRMontant.Text));
             controller.CreerCommande(commande);
-            Abonnement abonnement = new Abonnement(valeur.ToString(), null, null, txbGCRDateExpiration.Text, revue.Id);
+            Abonnement abonnement = new Abonnement(ConvertId(valeur.ToString()), DateTime.ParseExact(txbGCRDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture), int.Parse(txbGCRMontant.Text), DateTime.ParseExact(txbGCRDateExpiration.Text, FORMAT_DATE, CultureInfo.InvariantCulture), revue.Id);
             controller.CreerAbonnementRevue(abonnement);
             MessageBox.Show("La commande a été ajoutée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
             lesCommandes = controller.GetAllCommandes();
@@ -1960,16 +2009,23 @@ namespace MediaTekDocuments.view
                 return;
             }
             List<Exemplaire> lesExemplairesRevue = controller.GetExemplairesRevue(cbxGCRNumeroDocument.SelectedItem.ToString());
-            if (!DateConversion(txbGCRDateCommande.Text) || !DateConversion(txbGCRDateExpiration.Text))
+            Console.WriteLine("Taille: " + lesExemplairesRevue.Count);
+            DateTime date1 = DateTime.ParseExact(dgvCGRCommandesRevues.CurrentRow.Cells[1].Value.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+            DateTime date2 = DateTime.ParseExact(dgvCGRCommandesRevues.CurrentRow.Cells[3].Value.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+            if (!DateConversion(date1.ToString(FORMAT_DATE), FORMAT_DATE) || !DateConversion(date2.ToString(FORMAT_DATE), FORMAT_DATE))
             {
                 return;
             }
-            DateTime dateCom = DateTime.ParseExact(txbGCRDateCommande.Text, FORMAT_DATE, CultureInfo.InvariantCulture);
-            DateTime dateExp = DateTime.ParseExact(txbGCRDateExpiration.Text, FORMAT_DATE, CultureInfo.InvariantCulture);
-            if (lesExemplairesRevue.Select(exemplaire => exemplaire.DateAchat.ToString()).Any(dateString => DateConversion(dateString) && ParutionDansAbonnement(dateCom, dateExp, DateTime.ParseExact(dateString, FORMAT_DATE, CultureInfo.InvariantCulture))))
+            DateTime dateCom = DateTime.ParseExact(date1.ToString(FORMAT_DATE), FORMAT_DATE, CultureInfo.InvariantCulture);
+            DateTime dateExp = DateTime.ParseExact(date2.ToString(FORMAT_DATE), FORMAT_DATE, CultureInfo.InvariantCulture);
+            Console.WriteLine(lesExemplairesRevue[0].DateAchat.ToString());
+            foreach (Exemplaire exemplaire in lesExemplairesRevue)
             {
-                MessageBox.Show("Erreur : un exemplaire est rattaché.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                DateTime dateExemplaire = DateTime.ParseExact(exemplaire.DateAchat.ToString(), "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                if (DateConversion(dateExemplaire.ToString(FORMAT_DATE), FORMAT_DATE) && ParutionDansAbonnement(dateCom, dateExp, DateTime.ParseExact(dateExemplaire.ToString(FORMAT_DATE), FORMAT_DATE, CultureInfo.InvariantCulture))){
+                    MessageBox.Show("Erreur : un exemplaire est rattaché.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
             DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmation == DialogResult.Yes)
@@ -1984,20 +2040,13 @@ namespace MediaTekDocuments.view
             }
         }
 
-        public static bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateExpiration, DateTime dateParution)
-        {
-            if (dateParution >  dateCommande && dateParution < dateExpiration) {
-                return true;
-            }
-            return false;
-        }
-
-        #endregion
-
-        private void btnTest_Click(object sender, EventArgs e)
+        private void btnGCRAbonnements_Click(object sender, EventArgs e)
         {
             FrmAlerteAbonnements fenetre = new FrmAlerteAbonnements();
             fenetre.Show();
         }
+
+        #endregion
+
     }
 }

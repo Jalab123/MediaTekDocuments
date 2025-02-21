@@ -10,6 +10,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Runtime.Remoting.Messaging;
 using Serilog;
+using System.Windows.Forms;
 
 namespace MediaTekDocuments.dal
 {
@@ -235,6 +236,15 @@ namespace MediaTekDocuments.dal
             List<Document> lesCommandeDocuments = TraitementRecup<Document>(GET, "document/" + jsonIdCommandeDocument, null);
             Log.Information("Document récupéré avec succès (GetDocument).");
             Console.WriteLine("Document récupéré avec succès.");
+            return lesCommandeDocuments;
+        }
+
+        public List<Service> GetService(string id)
+        {
+            String jsonIdCommandeDocument = ConvertToJson("id", id);
+            List<Service> lesCommandeDocuments = TraitementRecup<Service>(GET, "service/" + jsonIdCommandeDocument, null);
+            Log.Information("Service récupéré avec succès (GetService).");
+            Console.WriteLine("Service récupéré avec succès.");
             return lesCommandeDocuments;
         }
 
@@ -465,6 +475,7 @@ namespace MediaTekDocuments.dal
                         // construction de la liste d'objets à partir du retour de l'api
                         liste = JsonConvert.DeserializeObject<List<T>>(resultString, new CustomBooleanJsonConverter());
                     }
+                    Console.WriteLine(methode + "-" + message + "-" + parametres);
                 }
                 else
                 {

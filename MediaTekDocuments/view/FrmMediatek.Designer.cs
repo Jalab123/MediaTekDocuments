@@ -255,7 +255,7 @@ namespace MediaTekDocuments.view
             this.cbxGCDNumeroDocument = new System.Windows.Forms.ComboBox();
             this.label83 = new System.Windows.Forms.Label();
             this.tabGestionCommandesRevues = new System.Windows.Forms.TabPage();
-            this.btnTest = new System.Windows.Forms.Button();
+            this.btnGCRAbonnements = new System.Windows.Forms.Button();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.btnGCRSupprimerCommande = new System.Windows.Forms.Button();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
@@ -2072,9 +2072,9 @@ namespace MediaTekDocuments.view
             this.label70.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label70.Location = new System.Drawing.Point(6, 16);
             this.label70.Name = "label70";
-            this.label70.Size = new System.Drawing.Size(222, 13);
+            this.label70.Size = new System.Drawing.Size(226, 13);
             this.label70.TabIndex = 37;
-            this.label70.Text = "Date de la commande (AAAA-MM-JJ) :";
+            this.label70.Text = "Date de la commande (JJ/MM/AAAA) :";
             // 
             // groupBox1
             // 
@@ -2472,9 +2472,9 @@ namespace MediaTekDocuments.view
             this.label87.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label87.Location = new System.Drawing.Point(6, 16);
             this.label87.Name = "label87";
-            this.label87.Size = new System.Drawing.Size(222, 13);
+            this.label87.Size = new System.Drawing.Size(226, 13);
             this.label87.TabIndex = 37;
-            this.label87.Text = "Date de la commande (AAAA-MM-JJ) :";
+            this.label87.Text = "Date de la commande (JJ/MM/AAAA) :";
             // 
             // groupBox5
             // 
@@ -2710,7 +2710,7 @@ namespace MediaTekDocuments.view
             // 
             // tabGestionCommandesRevues
             // 
-            this.tabGestionCommandesRevues.Controls.Add(this.btnTest);
+            this.tabGestionCommandesRevues.Controls.Add(this.btnGCRAbonnements);
             this.tabGestionCommandesRevues.Controls.Add(this.groupBox12);
             this.tabGestionCommandesRevues.Controls.Add(this.groupBox10);
             this.tabGestionCommandesRevues.Controls.Add(this.groupBox9);
@@ -2723,15 +2723,15 @@ namespace MediaTekDocuments.view
             this.tabGestionCommandesRevues.UseVisualStyleBackColor = true;
             this.tabGestionCommandesRevues.Enter += new System.EventHandler(this.tabGestionCommandesRevues_Enter);
             // 
-            // btnTest
+            // btnGCRAbonnements
             // 
-            this.btnTest.Location = new System.Drawing.Point(494, 495);
-            this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(162, 49);
-            this.btnTest.TabIndex = 57;
-            this.btnTest.Text = "Abonnements < 30 jours";
-            this.btnTest.UseVisualStyleBackColor = true;
-            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            this.btnGCRAbonnements.Location = new System.Drawing.Point(494, 495);
+            this.btnGCRAbonnements.Name = "btnGCRAbonnements";
+            this.btnGCRAbonnements.Size = new System.Drawing.Size(162, 49);
+            this.btnGCRAbonnements.TabIndex = 57;
+            this.btnGCRAbonnements.Text = "Abonnements < 30 jours";
+            this.btnGCRAbonnements.UseVisualStyleBackColor = true;
+            this.btnGCRAbonnements.Click += new System.EventHandler(this.btnGCRAbonnements_Click);
             // 
             // groupBox12
             // 
@@ -2817,9 +2817,9 @@ namespace MediaTekDocuments.view
             this.label99.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label99.Location = new System.Drawing.Point(7, 61);
             this.label99.Name = "label99";
-            this.label99.Size = new System.Drawing.Size(191, 13);
+            this.label99.Size = new System.Drawing.Size(195, 13);
             this.label99.TabIndex = 39;
-            this.label99.Text = "Date d\'expiration (AAAA-MM-JJ):";
+            this.label99.Text = "Date d\'expiration (JJ/MM/AAAA):";
             // 
             // label100
             // 
@@ -2837,9 +2837,9 @@ namespace MediaTekDocuments.view
             this.label101.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label101.Location = new System.Drawing.Point(6, 16);
             this.label101.Name = "label101";
-            this.label101.Size = new System.Drawing.Size(222, 13);
+            this.label101.Size = new System.Drawing.Size(226, 13);
             this.label101.TabIndex = 37;
-            this.label101.Text = "Date de la commande (AAAA-MM-JJ) :";
+            this.label101.Text = "Date de la commande (JJ/MM/AAAA) :";
             // 
             // groupBox9
             // 
@@ -3383,7 +3383,7 @@ namespace MediaTekDocuments.view
         private System.Windows.Forms.Label label96;
         private System.Windows.Forms.ComboBox cbxGCRNumeroDocument;
         private System.Windows.Forms.Label label97;
-        private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.Button btnGCRAbonnements;
     }
 }
 

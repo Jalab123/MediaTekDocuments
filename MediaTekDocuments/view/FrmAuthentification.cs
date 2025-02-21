@@ -44,7 +44,9 @@ namespace MediaTekDocuments.view
             else if (utilisateur.Count == 1)
             {
                 Console.WriteLine("Utilisateur connecté.");
-                niveauDroits = calculNiveauDroits(utilisateur[0]);
+                niveauDroits = CalculNiveauDroits(utilisateur[0]);
+                List<Service> service = controller.GetService(utilisateur[0].IdService);
+                MessageBox.Show("Connecté en tant que : " + txbLogin.Text + " (" + service[0].Nom + ").", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             // Compte relié à plusieurs services
             else
@@ -64,7 +66,7 @@ namespace MediaTekDocuments.view
             }
         }
 
-        private int calculNiveauDroits(Utilisateur utilisateur)
+        private static int CalculNiveauDroits(Utilisateur utilisateur)
         {
             // Administrateur / Administratif -> toutes les permissions
             if (utilisateur.IdService == "1" || utilisateur.IdService == "2")

@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace MediaTekDocuments.model
 {
     /// <summary>
@@ -9,12 +11,12 @@ namespace MediaTekDocuments.model
         public string Id { get; set; }
         public string IdLivreDVD { get; set; }
         public string IdSuivi { get; set; }
-        public string DateCommande { get; set; }
-        public string Montant { get; set; }
-        public string NbExemplaire { get; set; }
+        public DateTime DateCommande { get; set; }
+        public int Montant { get; set; }
+        public int NbExemplaire { get; set; }
         public string Statut { get; set; }
 
-        public CommandeDocument(string Id, string IdLivreDVD, string IdSuivi, string DateCommande, string Montant, string NbExemplaire, string Statut)
+        public CommandeDocument(string Id, string IdLivreDVD, string IdSuivi, DateTime DateCommande, int Montant, int NbExemplaire, string Statut)
         {
             this.Id = Id;
             this.IdLivreDVD = IdLivreDVD;
@@ -25,11 +27,5 @@ namespace MediaTekDocuments.model
             this.Statut = Statut;
         }
 
-
-
-        public override string ToString()
-        {
-            return $"Id: {Id}";
-        }
     }
 }

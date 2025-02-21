@@ -26,5 +26,10 @@ namespace MediaTekDocuments.controller
         {
             return access.GetUtilisateur(login, pwd);
         }
+
+        public List<Service> GetService(string id)
+        {
+            return access.GetService(id);
+        }
     }
 }
