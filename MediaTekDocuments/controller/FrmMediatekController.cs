@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using MediaTekDocuments.model;
 using MediaTekDocuments.dal;
+using System.Text;
+using System;
+using System.Globalization;
 
 namespace MediaTekDocuments.controller
 {

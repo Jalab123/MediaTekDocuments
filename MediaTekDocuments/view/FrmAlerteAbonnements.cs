@@ -42,6 +42,15 @@ namespace MediaTekDocuments.view
                     dgvAA.Rows.Add(d.Titre.ToString(), a.DateFinAbonnement.ToString());
                 }
             }
+            foreach (DataGridViewRow row in dgvAA.Rows)
+            {
+                if (row.Cells["DateFinAbonnement"].Value != null)
+                {
+                    DateTime date = Convert.ToDateTime(row.Cells["DateFinAbonnement"].Value);
+                    row.Cells["DateFinAbonnement"].Value = date.ToString("dd/MM/yyyy");
+                }
+            }
+
         }
     }
 }

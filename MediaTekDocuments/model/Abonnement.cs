@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace MediaTekDocuments.model
 {
     /// <summary>
@@ -7,12 +9,12 @@ namespace MediaTekDocuments.model
     public class Abonnement
     {
         public string Id { get; set; }
-        public string DateCommande { get; set; }
-        public string Montant { get; set; }
-        public string DateFinAbonnement { get; set; }
+        public DateTime DateCommande { get; set; }
+        public int Montant { get; set; }
+        public DateTime DateFinAbonnement { get; set; }
         public string IdRevue { get; set; }
 
-        public Abonnement(string Id, string DateCommande, string Montant, string DateFinAbonnement, string IdRevue)
+        public Abonnement(string Id, DateTime DateCommande, int Montant, DateTime DateFinAbonnement, string IdRevue)
         {
             this.Id = Id;
             this.DateCommande = DateCommande;

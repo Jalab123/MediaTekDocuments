@@ -1,0 +1,16 @@
+﻿C:\mediatekdocuments\MediaTekDocumentsSpecFlow\ImplicitUsings.cs
+C:\mediatekdocuments\MediaTekDocumentsSpecFlow\StepDefinitions\MediaTekDocumentsStepDefinitions.cs
+C:\Users\pilou\.nuget\packages\microsoft.net.test.sdk\17.13.0\build\netcoreapp3.1\Microsoft.NET.Test.Sdk.Program.cs
+C:\Users\pilou\.nuget\packages\system.diagnostics.diagnosticsource\9.0.2\contentFiles\any\netstandard2.0\ILLink\ILLink.Descriptors.LibraryBuild.xml
+C:\Users\pilou\.nuget\packages\microsoft.testplatform.testhost\17.13.0\build\netcoreapp3.1\x64\testhost.exe
+C:\Users\pilou\.nuget\packages\microsoft.testplatform.testhost\17.13.0\build\netcoreapp3.1\x64\testhost.dll
+C:\mediatekdocuments\MediaTekDocumentsSpecFlow\Features\SpecFlowMediaTekDocuments.feature
+C:\Users\pilou\.nuget\packages\specflow.plus.livingdocplugin\3.9.57\lib\netstandard2.0\LivingDoc.Dtos.dll
+C:\Users\pilou\.nuget\packages\specflow.plus.livingdocplugin\3.9.57\lib\netstandard2.0\LivingDoc.SpecFlowPlugin.dll
+C:\Users\pilou\.nuget\packages\specflow.nunit\3.9.74\lib\netstandard2.0\TechTalk.SpecFlow.NUnit.SpecFlowPlugin.dll
+C:\Users\pilou\.nuget\packages\nunit3testadapter\5.0.0\build\netcoreapp3.1\NUnit3.TestAdapter.pdb
+C:\Users\pilou\.nuget\packages\nunit3testadapter\5.0.0\build\netcoreapp3.1\nunit.engine.dll
+C:\Users\pilou\.nuget\packages\nunit3testadapter\5.0.0\build\netcoreapp3.1\nunit.engine.api.dll
+C:\Users\pilou\.nuget\packages\nunit3testadapter\5.0.0\build\netcoreapp3.1\nunit.engine.core.dll
+C:\Users\pilou\.nuget\packages\nunit3testadapter\5.0.0\build\netcoreapp3.1\testcentric.engine.metadata.dll
+C:\Users\pilou\.nuget\packages\nunit3testadapter\5.0.0\build\netcoreapp3.1\NUnit3.TestAdapter.dll

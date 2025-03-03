@@ -3,6 +3,7 @@ C:\mediatekdocuments\MediaTekDocuments\controller\FrmAlerteAbonnementsController
 C:\mediatekdocuments\MediaTekDocuments\manager\ApiRest.cs
 C:\mediatekdocuments\MediaTekDocuments\controller\FrmMediatekController.cs
 C:\mediatekdocuments\MediaTekDocuments\dal\Access.cs
+C:\mediatekdocuments\MediaTekDocuments\model\Service.cs
 C:\mediatekdocuments\MediaTekDocuments\model\Utilisateur.cs
 C:\mediatekdocuments\MediaTekDocuments\model\Abonnement.cs
 C:\mediatekdocuments\MediaTekDocuments\model\Suivi.cs
@@ -27,6 +28,7 @@ C:\mediatekdocuments\MediaTekDocuments\model\Rayon.cs
 C:\mediatekdocuments\MediaTekDocuments\model\Revue.cs
 C:\mediatekdocuments\MediaTekDocuments\Program.cs
 C:\mediatekdocuments\MediaTekDocuments\Properties\AssemblyInfo.cs
+C:\mediatekdocuments\MediaTekDocuments\ILLink\ILLink.Descriptors.LibraryBuild.xml
 C:\mediatekdocuments\MediaTekDocuments\Properties\Resources.resx
 C:\mediatekdocuments\MediaTekDocuments\view\FrmAuthentification.resx
 C:\mediatekdocuments\MediaTekDocuments\view\FrmAlerteAbonnements.resx

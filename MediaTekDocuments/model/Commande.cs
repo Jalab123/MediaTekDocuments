@@ -9,10 +9,10 @@ namespace MediaTekDocuments.model
     public class Commande
     {
         public string Id { get; }
-        public string DateCommande { get; }
-        public string Montant { get; }
+        public DateTime DateCommande { get; }
+        public int Montant { get; }
 
-        public Commande(string Id, string DateCommande, string Montant)
+        public Commande(string Id, DateTime DateCommande, int Montant)
         {
             this.Id = Id;
             this.DateCommande = DateCommande;
