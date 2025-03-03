@@ -12,44 +12,67 @@ using System.Runtime.Remoting.Messaging;
 using Serilog;
 using System.Windows.Forms;
 
+
+
 namespace MediaTekDocuments.dal
 {
+
+    /// <summary>
+    /// Accès aux données
+    /// </summary>
+    internal class NamespaceDoc
+    {
+
+    }
+
     /// <summary>
     /// Classe d'accès aux données
     /// </summary>
     public class Access
     {
+        /// <summary>
+        /// Chaîne de connexion
+        /// </summary>
         private static readonly string connectionName = "MediaTekDocuments.Properties.Settings.mediaTekDocumentsConnectionString";
+        /// <summary>
+        /// Chaîne de l'URI
+        /// </summary>
         private static readonly string connectionUriApi = "MediaTekDocuments.Properties.Settings.mediaTekDocumentsConnectionUriApi";
         /// <summary>
-        /// adresse de l'API
+        /// Adresse de l'API
         /// </summary>
         private static readonly string uriApi = GetConnectionStringByName(connectionUriApi);
         /// <summary>
-        /// instance unique de la classe
+        /// Instance unique de la classe
         /// </summary>
         private static Access instance = null;
         /// <summary>
-        /// instance de ApiRest pour envoyer des demandes vers l'api et recevoir la réponse
+        /// Instance de ApiRest pour envoyer des demandes vers l'api et recevoir la réponse
         /// </summary>
         private readonly ApiRest api = null;
         /// <summary>
-        /// méthode HTTP pour select
+        /// Méthode HTTP pour select
         /// </summary>
         private const string GET = "GET";
         /// <summary>
-        /// méthode HTTP pour insert
+        /// Méthode HTTP pour insert
         /// </summary>
         private const string POST = "POST";
         /// <summary>
-        /// méthode HTTP pour update
+        /// Méthode HTTP pour update
+        /// </summary>
         private const string PUT = "PUT";
         /// <summary>
-        /// méthode HTTP pour delete
+        /// Méthode HTTP pour delete
+        /// </summary>
         private const string DELETE = "DELETE";
-
+        /// <summary>
+        /// Commandedocument
+        /// </summary>
         private const string COMMANDE_DOCUMENT = "commandedocument";
-
+        /// <summary>
+        /// Champs
+        /// </summary>
         private const string CHAMPS = "champs=";
 
 
@@ -79,9 +102,10 @@ namespace MediaTekDocuments.dal
             }
         }
 
-        // Récupération de la chaîne de connexion
+        /// <summary>
+        /// Récupération de la chaîne de connexion
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name">Chaîne au format string à récupérer</param>
         /// <returns></returns>
         static string GetConnectionStringByName(string name)
         {
@@ -110,7 +134,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne tous les genres à partir de la BDD
+        /// Retourne tous les Genres à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Genre</returns>
         public List<Categorie> GetAllGenres()
@@ -122,7 +146,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne tous les rayons à partir de la BDD
+        /// Retourne tous les Rayons à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Rayon</returns>
         public List<Categorie> GetAllRayons()
@@ -134,7 +158,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne toutes les catégories de public à partir de la BDD
+        /// Retourne toutes les Catégories de Public à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Public</returns>
         public List<Categorie> GetAllPublics()
@@ -146,7 +170,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne toutes les livres à partir de la BDD
+        /// Retourne tous les Livres à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Livre</returns>
         public List<Livre> GetAllLivres()
@@ -158,7 +182,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne toutes les dvd à partir de la BDD
+        /// Retourne tous les Dvd à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Dvd</returns>
         public List<Dvd> GetAllDvd()
@@ -170,7 +194,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne toutes les revues à partir de la BDD
+        /// Retourne toutes les Revues à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Revue</returns>
         public List<Revue> GetAllRevues()
@@ -182,7 +206,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne toutes les commandes à partir de la BDD
+        /// Retourne toutes les Commandes à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Commande</returns>
         public List<Commande> GetAllCommandes()
@@ -194,7 +218,7 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne toutes les commandes à partir de la BDD
+        /// Retourne tous les Commandedocuments à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets CommandeDocument</returns>
         public List<CommandeDocument> GetAllCommandeDocuments()
@@ -205,6 +229,10 @@ namespace MediaTekDocuments.dal
             return lesCommandeDocuments;
         }
 
+        /// <summary>
+        /// Retourne les Abonnements se terminant dans moins de 30 jours à partir de la BDD
+        /// </summary>
+        /// <returns>Liste d'objets Abonnement</returns>
         public List<Abonnement> GetDerniersAbonnements()
         {
             List<Abonnement> lesAbonnements = TraitementRecup<Abonnement>(GET, "abonnement", null);
@@ -213,6 +241,10 @@ namespace MediaTekDocuments.dal
             return lesAbonnements;
         }
 
+        /// <summary>
+        /// Retourne les Suivis à partir de la BDD
+        /// </summary>
+        /// <returns>Liste d'objets Suivi</returns>
         public List<Suivi> GetAllSuivis()
         {
             List<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
@@ -221,6 +253,11 @@ namespace MediaTekDocuments.dal
             return lesSuivis;
         }
 
+        /// <summary>
+        /// Retourne les commandedocument grâce à un id de livre ou dvd spécifique
+        /// </summary>
+        /// <param name="idlivredvd">L'id du Livre ou Dvd concerné</param>
+        /// <returns>Liste d'objets CommandeDocument</returns>
         public List<CommandeDocument> GetCommandeDocumentsLivreDvd(string idlivredvd)
         {
             String jsonIdCommandeDocument = ConvertToJson("idlivredvd", idlivredvd);
@@ -230,6 +267,11 @@ namespace MediaTekDocuments.dal
             return lesCommandeDocuments;
         }
 
+        /// <summary>
+        /// Retourne les Documents grâce à un id spécifique
+        /// </summary>
+        /// <param name="iddocument">L'id du Document concerné</param>
+        /// <returns>Liste d'objets Document</returns>
         public List<Document> GetDocument(string iddocument)
         {
             String jsonIdCommandeDocument = ConvertToJson("id", iddocument);
@@ -239,6 +281,11 @@ namespace MediaTekDocuments.dal
             return lesCommandeDocuments;
         }
 
+        /// <summary>
+        /// Retourne les Services grâce à un id spécifique
+        /// </summary>
+        /// <param name="id">L'id du Service concerné</param>
+        /// <returns>Liste d'objets Service</returns>
         public List<Service> GetService(string id)
         {
             String jsonIdCommandeDocument = ConvertToJson("id", id);
@@ -248,6 +295,12 @@ namespace MediaTekDocuments.dal
             return lesCommandeDocuments;
         }
 
+        /// <summary>
+        /// Retourne les Utilisateurs grâce à un login et pwd spécifique (tentative d'authentification)
+        /// </summary>
+        /// <param name="login">Nom de l'Utilisateur concerné</param>
+        /// <param name="pwd">Mot de passe de l'Utilisateur concerné</param>
+        /// <returns>Liste d'objets Utilisateur</returns>
         public List<Utilisateur> GetUtilisateur(string login, string pwd)
         {
             String jsonUtilisateur = "{" + "\"login\": \"" + login + "\"," + "\"pwd\": \"" + pwd + "\"" + "}";
@@ -257,6 +310,11 @@ namespace MediaTekDocuments.dal
             return lesUtilisateurs;
         }
 
+        /// <summary>
+        /// Retourne les Abonnements grâce à un id de Revue spécifique
+        /// </summary>
+        /// <param name="idrevue">L'id de la Revue concernée</param>
+        /// <returns>Liste d'objets Abonnement</returns>
         public List<Abonnement> GetAbonnementsRevue(string idrevue)
         {
             String jsonIdAbonnement = ConvertToJson("idrevue", idrevue);
@@ -268,9 +326,9 @@ namespace MediaTekDocuments.dal
 
 
         /// <summary>
-        /// Retourne les exemplaires d'une revue
+        /// Retourne les Exemplaires d'une revue
         /// </summary>
-        /// <param name="idDocument">id de la revue concernée</param>
+        /// <param name="idDocument">L'id de la Revue concernée</param>
         /// <returns>Liste d'objets Exemplaire</returns>
         public List<Exemplaire> GetExemplairesRevue(string idDocument)
         {
@@ -281,6 +339,11 @@ namespace MediaTekDocuments.dal
             return lesExemplaires;
         }
 
+        /// <summary>
+        /// Crée une Commande dans la BDD
+        /// </summary>
+        /// <param name="commande">L'objet Commande concerné</param>
+        /// <returns>True si la création a pu se faire (retour != null)</returns>
         public bool CreerCommande(Commande commande)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(commande);
@@ -299,6 +362,11 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        /// <summary>
+        /// Crée un Commandedocument dans la BDD
+        /// </summary>
+        /// <param name="commandeDocument">L'objet CommandeDocument concerné </param>
+        /// <returns>True si la création a pu se faire (retour != null)</returns>
         public bool CreerCommandeDocumentsLivreDvd(CommandeDocument commandeDocument)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
@@ -317,6 +385,11 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        /// <summary>
+        /// Crée un Abonnement dans la BDD
+        /// </summary>
+        /// <param name="abonnement">L'objet Abonnement concerné</param>
+        /// <returns>True si la création a pu se faire (retour != null)</returns>
         public bool CreerAbonnementRevue(Abonnement abonnement)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(abonnement);
@@ -335,6 +408,11 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        /// <summary>
+        /// Crée un Suivi dans la BDD
+        /// </summary>
+        /// <param name="suivi">L'objet Suivi concerné</param>
+        /// <returns>True si la création a pu se faire (retour != null)</returns>
         public bool CreerSuivi(Suivi suivi)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(suivi);
@@ -353,6 +431,11 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        /// <summary>
+        /// Supprime un Suivi dans la BDD
+        /// </summary>
+        /// <param name="suivi">L'objet Suivi concerné</param>
+        /// <returns>True si la suppression a pu se faire (retour != null)</returns>
         public bool SupprimerSuivi(Suivi suivi)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(suivi);
@@ -371,6 +454,11 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        /// <summary>
+        /// Modifie un Suivi dans la BDD
+        /// </summary>
+        /// <param name="suivi">L'objet Suivi concerné</param>
+        /// <returns>True si la modification a pu se faire (retour != null)</returns>
         public bool ModifierSuivi(Suivi suivi)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(suivi);
@@ -389,6 +477,11 @@ namespace MediaTekDocuments.dal
             return false;
         }
 
+        /// <summary>
+        /// Supprime une Commande dans la BDD
+        /// </summary>
+        /// <param name="commande">L'objet Commande concerné</param>
+        /// <returns>True si la suppression a pu se faire (retour != null)</returns>
         public bool SupprimerCommande(Commande commande)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(commande);
@@ -406,8 +499,12 @@ namespace MediaTekDocuments.dal
             }
             return false;
         }
-        
 
+        /// <summary>
+        /// Supprime un CommandeDocument dans la BDD
+        /// </summary>
+        /// <param name="commandeDocument">L'objet CommandeDocument concerné</param>
+        /// <returns>True si la suppression a pu se faire (retour != null)</returns>
         public bool SupprimerCommandeDocument(CommandeDocument commandeDocument)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(commandeDocument);
@@ -427,10 +524,10 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// ecriture d'un exemplaire en base de données
+        /// Crée un Exemplaire dans la BDD
         /// </summary>
-        /// <param name="exemplaire">exemplaire à insérer</param>
-        /// <returns>true si l'insertion a pu se faire (retour != null)</returns>
+        /// <param name="exemplaire">L'objet Exemplaire concerné</param>
+        /// <returns>True si l'insertion a pu se faire (retour != null)</returns>
         public bool CreerExemplaire(Exemplaire exemplaire)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
@@ -455,7 +552,7 @@ namespace MediaTekDocuments.dal
         /// <typeparam name="T"></typeparam>
         /// <param name="methode">verbe HTTP (GET, POST, PUT, DELETE)</param>
         /// <param name="message">information envoyée dans l'url</param>
-        /// <param name="parametres">paramètres à envoyer dans le body, au format "chp1=val1&chp2=val2&..."</param>
+        /// <param name="parametres">paramètres à envoyer dans le body, au format</param>
         /// <returns>liste d'objets récupérés (ou liste vide)</returns>
         private List<T> TraitementRecup<T> (String methode, String message, String parametres)
         {

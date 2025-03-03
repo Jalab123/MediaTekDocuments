@@ -4,7 +4,18 @@ using System.Windows.Forms;
 
 namespace MediaTekDocuments
 {
-    static class Program
+    /// <summary>
+    /// Application MediaTekDocuments
+    /// </summary>
+    internal class NamespaceDoc
+    {
+
+    }
+
+    /// <summary>
+    /// Program
+    /// </summary>
+    public static class Program
     {
         /// <summary>
         /// Point d'entrée principal de l'application.

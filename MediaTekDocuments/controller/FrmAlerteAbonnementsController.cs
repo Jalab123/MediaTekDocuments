@@ -7,7 +7,7 @@ namespace MediaTekDocuments.controller
     /// <summary>
     /// Contrôleur lié à FrmAlertAbonnementsController
     /// </summary>
-    class FrmAlerteAbonnementsController
+    public class FrmAlerteAbonnementsController
     {
         /// <summary>
         /// Objet d'accès aux données
@@ -22,11 +22,20 @@ namespace MediaTekDocuments.controller
             access = Access.GetInstance();
         }
 
+        /// <summary>
+        /// Récupère les Abonnements qui se terminent dans 30 jours
+        /// </summary>
+        /// <returns>Liste d'objets Abonnement</returns>
         public List<Abonnement> GetDerniersAbonnements()
         {
             return access.GetDerniersAbonnements();
         }
 
+        /// <summary>
+        /// Recupère un Document grâce à un id spécifique
+        /// </summary>
+        /// <param name="iddocument"></param>
+        /// <returns>Liste d'objets Document</returns>
         public List<Document> GetDocument(string iddocument)
         {
             return access.GetDocument(iddocument);
