@@ -5,12 +5,21 @@ using System.Text;
 using System;
 using System.Globalization;
 
+
 namespace MediaTekDocuments.controller
 {
     /// <summary>
+    /// Contrôleurs
+    /// </summary>
+    internal class NamespaceDoc
+    {
+
+    }
+
+    /// <summary>
     /// Contrôleur lié à FrmMediatek
     /// </summary>
-    class FrmMediatekController
+    public class FrmMediatekController
     {
         /// <summary>
         /// Objet d'accès aux données
@@ -26,7 +35,7 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
-        /// getter sur la liste des genres
+        /// Getter sur la liste des Genres
         /// </summary>
         /// <returns>Liste d'objets Genre</returns>
         public List<Categorie> GetAllGenres()
@@ -35,7 +44,7 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
-        /// getter sur la liste des livres
+        /// Getter sur la liste des Livres
         /// </summary>
         /// <returns>Liste d'objets Livre</returns>
         public List<Livre> GetAllLivres()
@@ -44,16 +53,16 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
-        /// getter sur la liste des Dvd
+        /// Getter sur la liste des Dvd
         /// </summary>
-        /// <returns>Liste d'objets dvd</returns>
+        /// <returns>Liste d'objets Dvd</returns>
         public List<Dvd> GetAllDvd()
         {
             return access.GetAllDvd();
         }
 
         /// <summary>
-        /// getter sur la liste des revues
+        /// Getter sur la liste des Revues
         /// </summary>
         /// <returns>Liste d'objets Revue</returns>
         public List<Revue> GetAllRevues()
@@ -62,7 +71,7 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
-        /// getter sur les rayons
+        /// Getter sur les Rayons
         /// </summary>
         /// <returns>Liste d'objets Rayon</returns>
         public List<Categorie> GetAllRayons()
@@ -71,7 +80,7 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
-        /// getter sur les publics
+        /// Getter sur les Publics
         /// </summary>
         /// <returns>Liste d'objets Public</returns>
         public List<Categorie> GetAllPublics()
@@ -80,7 +89,7 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
-        /// getter sur les commandes
+        /// Getter sur les Commandes
         /// </summary>
         /// <returns>Liste d'objets Commande</returns>
         public List<Commande> GetAllCommandes()
@@ -89,7 +98,7 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
-        /// getter sur les commandes
+        /// Getter sur les Commandedocuments
         /// </summary>
         /// <returns>Liste d'objets CommandeDocument</returns>
         public List<CommandeDocument> GetAllCommandeDocuments()
@@ -97,71 +106,129 @@ namespace MediaTekDocuments.controller
             return access.GetAllCommandeDocuments();
         }
 
+        /// <summary>
+        /// Getter sur les Suivis
+        /// </summary>
+        /// <returns>Liste d'objets Suivi</returns>
         public List<Suivi> GetAllSuivis()
         {
             return access.GetAllSuivis();
         }
 
+        /// <summary>
+        /// Récupère les commandedocument grâce à un id de livre ou dvd spécifique
+        /// </summary>
+        /// <param name="idlivredvd">L'id du Livre ou Dvd concerné</param>
+        /// <returns>Liste d'objets CommandeDocument</returns>
         public List<CommandeDocument> GetCommandeDocumentsLivreDvd(string idlivredvd)
         {
             return access.GetCommandeDocumentsLivreDvd(idlivredvd);
         }
 
+        /// <summary>
+        /// Récupère un Abonnement grâce à un id de Revue spécifique
+        /// </summary>
+        /// <param name="idrevue">L'id de la Revue concernée</param>
+        /// <returns>Liste d'objets Abonnement</returns>
         public List<Abonnement> GetAbonnementsRevue(string idrevue)
         {
             return access.GetAbonnementsRevue(idrevue);
         }
 
         /// <summary>
-        /// récupère les exemplaires d'une revue
+        /// Récupère les Exemplaires d'une Revue
         /// </summary>
-        /// <param name="idDocuement">id de la revue concernée</param>
+        /// <param name="idDocuement">L'id de la Revue concernée</param>
         /// <returns>Liste d'objets Exemplaire</returns>
         public List<Exemplaire> GetExemplairesRevue(string idDocuement)
         {
             return access.GetExemplairesRevue(idDocuement);
         }
 
+        /// <summary>
+        /// Récupère les Abonnements qui se terminent dans 30 jours
+        /// </summary>
+        /// <returns>Liste d'objets Abonnement</returns>
         public List<Abonnement> GetDerniersAbonnements()
         {
             return access.GetDerniersAbonnements();
         }
 
+        /// <summary>
+        /// Crée une Commande dans la BDD
+        /// </summary>
+        /// <param name="commande">L'objet Commande concerné</param>
+        /// <returns>True si la création a pu se faire</returns>
         public bool CreerCommande(Commande commande)
         {
             return access.CreerCommande(commande);
         }
 
+        /// <summary>
+        /// Crée un Commandedocument dans la BDD
+        /// </summary>
+        /// <param name="commandeDocument">L'objet CommandeDocument concerné</param>
+        /// <returns>True si la création a pu se faire</returns>
         public bool CreerCommandeDocumentsLivreDvd(CommandeDocument commandeDocument)
         {
             return access.CreerCommandeDocumentsLivreDvd(commandeDocument);
         }
 
+        /// <summary>
+        /// Crée un Abonnement dans la BDD
+        /// </summary>
+        /// <param name="abonnement">L'objet Abonnement concerné</param>
+        /// <returns>True si la création a pu se faire</returns>
         public bool CreerAbonnementRevue(Abonnement abonnement)
         {
             return access.CreerAbonnementRevue(abonnement);
         }
 
+        /// <summary>
+        /// Crée un Suivi dans la BDD
+        /// </summary>
+        /// <param name="suivi">L'objet Suivi concerné</param>
+        /// <returns>True si la création a pu se faire</returns>
         public bool CreerSuivi(Suivi suivi)
         {
             return access.CreerSuivi(suivi);
         }
 
+        /// <summary>
+        /// Supprime un Suivi dans la BDD
+        /// </summary>
+        /// <param name="suivi">L'objet Suivi concerné</param>
+        /// <returns>True si la suppression a pu se faire</returns>
         public bool SupprimerSuivi(Suivi suivi)
         {
             return access.SupprimerSuivi(suivi);
         }
 
+        /// <summary>
+        /// Modifie un Suivi dans la BDD
+        /// </summary>
+        /// <param name="suivi">L'objet Suivi concerné</param>
+        /// <returns>True si la modification a pu se faire</returns>
         public bool ModifierSuivi(Suivi suivi)
         {
             return access.ModifierSuivi(suivi);
         }
 
+        /// <summary>
+        /// Supprime une Commande dans la BDD
+        /// </summary>
+        /// <param name="commande">L'objet Commande concerné</param>
+        /// <returns>True si la suppression a pu se faire</returns>
         public bool SupprimerCommande(Commande commande)
         {
             return access.SupprimerCommande(commande);
         }
 
+        /// <summary>
+        /// Supprimer un Commandedocument dans la BDD
+        /// </summary>
+        /// <param name="commandeDocument">L'objet CommandeDocument concerné</param>
+        /// <returns>True si la suppression a pu se faire</returns>
         public bool SupprimerCommandeDocument(CommandeDocument commandeDocument)
         {
             return access.SupprimerCommandeDocument(commandeDocument);
@@ -169,7 +236,7 @@ namespace MediaTekDocuments.controller
 
 
         /// <summary>
-        /// Crée un exemplaire d'une revue dans la bdd
+        /// Crée un Exemplaire d'une Revue dans la bdd
         /// </summary>
         /// <param name="exemplaire">L'objet Exemplaire concerné</param>
         /// <returns>True si la création a pu se faire</returns>
