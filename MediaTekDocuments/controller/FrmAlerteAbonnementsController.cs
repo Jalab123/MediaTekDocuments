@@ -34,7 +34,7 @@ namespace MediaTekDocuments.controller
         /// <summary>
         /// Recupère un Document grâce à un id spécifique
         /// </summary>
-        /// <param name="iddocument"></param>
+        /// <param name="iddocument">L'id du Document</param>
         /// <returns>Liste d'objets Document</returns>
         public List<Document> GetDocument(string iddocument)
         {

@@ -349,7 +349,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(commande);
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", CHAMPS + jsonExemplaire);
+                List<Commande> liste = TraitementRecup<Commande>(POST, "commande", CHAMPS + jsonExemplaire);
                 Log.Information("Commande créée avec succès (CreerCommande).");
                 Console.WriteLine("Commande créée avec succès.");
                 return (liste != null);
@@ -420,7 +420,7 @@ namespace MediaTekDocuments.dal
             {
                 List<Suivi> liste = TraitementRecup<Suivi>(POST, "suivi", CHAMPS + jsonExemplaire);
                 Log.Information("Suivi crée avec succès (CreerSuivi).");
-                Console.WriteLine("Commande crée avec succès.");
+                Console.WriteLine("Suivi crée avec succès.");
                 return (liste != null);
             }
             catch (Exception ex)
@@ -441,7 +441,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(suivi);
             try
             {
-                List<Suivi> liste = TraitementRecup<Suivi>(DELETE, "suivi", CHAMPS + jsonExemplaire);
+                List<Suivi> liste = TraitementRecup<Suivi>(DELETE, "suivi/" + jsonExemplaire, null);
                 Log.Information("Suivi supprimé avec succès (SupprimerSuivi).");
                 Console.WriteLine("Suivi supprimé avec succès.");
                 return (liste != null);
@@ -487,7 +487,7 @@ namespace MediaTekDocuments.dal
             String jsonExemplaire = JsonConvert.SerializeObject(commande);
             try
             {
-                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(DELETE, "commande/" + jsonExemplaire, null);
+                List<Commande> liste = TraitementRecup<Commande>(DELETE, "commande/" + jsonExemplaire, null);
                 Log.Information("Commande supprimée avec succès (SupprimerCommande).");
                 Console.WriteLine("Commande supprimée avec succès.");
                 return (liste != null);
@@ -530,7 +530,7 @@ namespace MediaTekDocuments.dal
         /// <returns>True si l'insertion a pu se faire (retour != null)</returns>
         public bool CreerExemplaire(Exemplaire exemplaire)
         {
-            String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
+            String jsonExemplaire = JsonConvert.SerializeObject(exemplaire);
             try
             {
                 List<Exemplaire> liste = TraitementRecup<Exemplaire>(POST, "exemplaire", CHAMPS + jsonExemplaire);

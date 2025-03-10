@@ -14,13 +14,6 @@ namespace MediaTekDocuments.view
 
 {
     /// <summary>
-    /// Vues
-    /// </summary>
-    internal class NamespaceDoc
-    {
-
-    }
-    /// <summary>
     /// Classe d'affichage
     /// </summary>
     public partial class FrmMediatek : Form
@@ -110,7 +103,7 @@ namespace MediaTekDocuments.view
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
         /// </summary>
-        /// <param name="niveauDroits"></param>
+        /// <param name="niveauDroits">Niveau de droits</param>
         public FrmMediatek(int niveauDroits)
         {
             InitializeComponent();
@@ -1464,6 +1457,8 @@ namespace MediaTekDocuments.view
         /// <param name="e">Evenement</param>
         private void tabGestionCommandesLivres_Enter(object sender, EventArgs e)
         {
+            cbxGCLNumeroDocument.Text = "";
+            cbxGCLNumeroDocument.Items.Clear();
             lesLivres = controller.GetAllLivres();
             lesCommandes = controller.GetAllCommandes();
             lesSuivis = controller.GetAllSuivis();
@@ -1737,13 +1732,19 @@ namespace MediaTekDocuments.view
                 MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            if (cbxGCLNumeroDocument.SelectedItem is null){
+                MessageBox.Show("Erreur, veuillez sélectionner un numéro de document.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (dgvCGLCommandesLivre.CurrentRow.Cells[6].Value.ToString() != LIVREE)
             {
                 DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirmation == DialogResult.Yes)
                 {
                     Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGLCommandesLivre.CurrentRow.Cells[0].Value));
+                    CommandeDocument leCommandeDocument = controller.GetCommandeDocumentsLivreDvd(cbxGCLNumeroDocument.SelectedItem.ToString())[0];
                     controller.SupprimerCommande(laCommande);
+                    controller.SupprimerSuivi(new Suivi(leCommandeDocument.IdSuivi, null));
                     MessageBox.Show("La commande a été supprimée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Livre livre = lesLivres.Find(x => x.Id.Equals(cbxGCLNumeroDocument.SelectedItem));
                     lesCommandes = controller.GetAllCommandes();
@@ -1770,6 +1771,8 @@ namespace MediaTekDocuments.view
         /// <param name="e">Evenement</param>
         private void tabGestionCommandesDvd_Enter(object sender, EventArgs e)
         {
+            cbxGCDNumeroDocument.Text = "";
+            cbxGCDNumeroDocument.Items.Clear();
             lesDvd = controller.GetAllDvd();
             lesCommandes = controller.GetAllCommandes();
             lesSuivis = controller.GetAllSuivis();
@@ -1777,7 +1780,7 @@ namespace MediaTekDocuments.view
         }
 
         /// <summary>
-        /// Remplit le DataGridView avec la liste reçue en paramètre
+        /// Remplit le ComboBox avec la liste reçue en paramètre
         /// </summary>
         /// <param name="dvds">Liste de Dvds</param>
         private void RemplirCbxDvdNumeroDocument(List<Dvd> dvds)
@@ -2043,13 +2046,20 @@ namespace MediaTekDocuments.view
                 MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            if (cbxGCDNumeroDocument.SelectedItem is null)
+            {
+                MessageBox.Show("Erreur, veuillez sélectionner un numéro de document.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (dgvCGDCommandesDvd.CurrentRow.Cells[6].Value.ToString() != LIVREE)
             {
                 DialogResult confirmation = MessageBox.Show("Etes-vous sûr de vouloir supprimer cette commande?", CONFIRMATION, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirmation == DialogResult.Yes)
                 {
                     Commande laCommande = lesCommandes.Find(x => x.Id.Equals(dgvCGDCommandesDvd.CurrentRow.Cells[0].Value));
+                    CommandeDocument leCommandeDocument = controller.GetCommandeDocumentsLivreDvd(cbxGCDNumeroDocument.SelectedItem.ToString())[0];
                     controller.SupprimerCommande(laCommande);
+                    controller.SupprimerSuivi(new Suivi(leCommandeDocument.IdSuivi, null));
                     MessageBox.Show("La commande a été supprimée avec succès.", SUCCES, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Dvd dvd = lesDvd.Find(x => x.Id.Equals(cbxGCDNumeroDocument.SelectedItem));
                     lesCommandes = controller.GetAllCommandes();
@@ -2081,6 +2091,8 @@ namespace MediaTekDocuments.view
         /// <param name="e">Evenement</param>
         private void tabGestionCommandesRevues_Enter(object sender, EventArgs e)
         {
+            cbxGCRNumeroDocument.Text = "";
+            cbxGCRNumeroDocument.Items.Clear();
             lesRevues = controller.GetAllRevues();
             lesCommandes = controller.GetAllCommandes();
             lesSuivis = controller.GetAllSuivis();
@@ -2248,6 +2260,11 @@ namespace MediaTekDocuments.view
             if (niveauDroits < 2)
             {
                 MessageBox.Show(ERREUR_PERMISSIONS, ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (cbxGCRNumeroDocument.SelectedItem is null)
+            {
+                MessageBox.Show("Erreur, veuillez sélectionner un numéro de document.", ERREUR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             List<Exemplaire> lesExemplairesRevue = controller.GetExemplairesRevue(cbxGCRNumeroDocument.SelectedItem.ToString());

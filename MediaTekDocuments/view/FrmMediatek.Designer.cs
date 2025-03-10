@@ -2504,7 +2504,7 @@ namespace MediaTekDocuments.view
             this.groupBox5.Size = new System.Drawing.Size(859, 438);
             this.groupBox5.TabIndex = 1;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Recherches et informations sur le livre";
+            this.groupBox5.Text = "Recherches et informations sur le dvd";
             // 
             // dgvCGDCommandesDvd
             // 
@@ -2867,7 +2867,7 @@ namespace MediaTekDocuments.view
             this.groupBox9.Size = new System.Drawing.Size(859, 438);
             this.groupBox9.TabIndex = 2;
             this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Recherches et informations sur le livre";
+            this.groupBox9.Text = "Recherches et informations sur la revue";
             // 
             // dgvCGRCommandesRevues
             // 
