@@ -1,77 +1,106 @@
 # MediatekDocuments
-Cette application permet de gérer les documents (livres, DVD, revues) d'une médiathèque. Elle a été codée en C# sous Visual Studio 2019. C'est une application de bureau, prévue d'être installée sur plusieurs postes accédant à la même base de données.<br>
-L'application exploite une API REST pour accéder à la BDD MySQL. Des explications sont données plus loin, ainsi que le lien de récupération.
-## Présentation
-Actuellement l'application est partiellement codée. Voici les fonctionnalités actuellement opérationnelles : recherches et affichage d'informations sur les documents de la médiathèque (livres, DVD, revues), réception de nouveaux numéros de revues.<br>
-![img1](https://github.com/CNED-SLAM/MediaTekDocuments/assets/100127886/9b5a4c1b-6914-4455-94bf-fec24adba3ec)
-<br>L'application ne comporte qu'une seule fenêtre divisée en plusieurs onglets.
-## Les différents onglets
-### Onglet 1 : Livres
-Cet onglet présente la liste des livres, triée par défaut sur le titre.<br>
-La liste comporte les informations suivantes : titre, auteur, collection, genre, public, rayon.
-![img2](https://github.com/CNED-SLAM/MediaTekDocuments/assets/100127886/e3f31979-cf24-416d-afb1-a588356e8966)
-#### Recherches
-<strong>Par le titre :</strong> Il est possible de rechercher un ou plusieurs livres par le titre. La saisie dans la zone de recherche se fait en autocomplétions sans tenir compte de la casse. Seuls les livres concernés apparaissent dans la liste.<br>
-<strong>Par le numéro :</strong> il est possible de saisir un numéro et, en cliquant sur "Rechercher", seul le livre concerné apparait dans la liste (ou un message d'erreur si le livre n'est pas trouvé, avec la liste remplie à nouveau).
-#### Filtres
-Il est possible d'appliquer un filtre (un seul à la fois) sur une de ces 3 catégories : genre, public, rayon.<br>
-Un combo par catégorie permet de sélectionner un item. Seuls les livres correspondant à l'item sélectionné, apparaissent dans la liste (par exemple, en choisissant le genre "Policier", seuls les livres de genre "Policier" apparaissent).<br>
-Le fait de sélectionner un autre filtre ou de faire une recherche, annule le filtre actuel.<br>
-Il est possible aussi d'annuler le filtre en cliquant sur une des croix.
-#### Tris
-Le fait de cliquer sur le titre d'une des colonnes de la liste des livres, permet de trier la liste par rapport à la colonne choisie.
-#### Affichage des informations détaillées
-Si la liste des livres contient des éléments, par défaut il y en a toujours un de sélectionné. Il est aussi possible de sélectionner une ligne (donc un livre) en cliquant n'importe où sur la ligne.<br>
-La partie basse de la fenêtre affiche les informations détaillées du livre sélectionné (numéro de document, code ISBN, titre, auteur(e), collection, genre, public, rayon, chemin de l'image) ainsi que l'image.
-### Onglet 2 : DVD
-Cet onglet présente la liste des DVD, triée par titre.<br>
-La liste comporte les informations suivantes : titre, durée, réalisateur, genre, public, rayon.<br>
-Le fonctionnement est identique à l'onglet des livres.<br>
-La seule différence réside dans certaines informations détaillées, spécifiques aux DVD : durée (à la place de ISBN), réalisateur (à la place de l'auteur), synopsis (à la place de collection).
-### Onglet 3 : Revues
-Cet onglet présente la liste des revues, triées par titre.<br>
-La liste comporte les informations suivantes : titre, périodicité, délai mise à dispo, genre, public, rayon.<br>
-Le fonctionnement est identique à l'onglet des livres.<br>
-La seule différence réside dans certaines informations détaillées, spécifiques aux revues : périodicité (à la place de l'auteur), délai mise à dispo (à la place de collection).
-### Onglet 4 : Parutions des revues
-Cet onglet permet d'enregistrer la réception de nouvelles parutions d'une revue.<br>
-Il se décompose en 2 parties (groupbox).
-#### Partie "Recherche revue"
-Cette partie permet, à partir de la saisie d'un numéro de revue (puis en cliquant sur le bouton "Rechercher"), d'afficher toutes les informations de la revue (comme dans l'onglet précédent), ainsi que son image principale en petit, avec en plus la liste des parutions déjà reçues (numéro, date achat, chemin photo). Sur la sélection d'une ligne dans la liste des parutions, la photo de la parution correspondante s'affiche à droite.<br>
-Dès qu'un numéro de revue est reconnu et ses informations affichées, la seconde partie ("Nouvelle parution réceptionnée pour cette revue") devient accessible.<br>
-Si une modification est apportée au numéro de la revue, toutes les zones sont réinitialisées et la seconde partie est rendue inaccessible, tant que le bouton "Rechercher" n'est pas utilisé.
-#### Partie "Nouvelle parution réceptionnée pour cette revue"
-Cette partie n'est accessible que si une revue a bien été trouvée dans la première partie.<br>
-Il est possible alors de réceptionner une nouvelle parution en saisissant son numéro, en sélectionnant une date (date du jour proposée par défaut) et en cherchant l'image correspondante (optionnel) qui doit alors s'afficher à droite.<br>
-Le clic sur "Valider la réception" va permettre d'ajouter un tuple dans la table Exemplaire de la BDD. La parution correspondante apparaitra alors automatiquement dans la liste des parutions et les zones de la partie "Nouvelle parution réceptionnée pour cette revue" seront réinitialisées.<br>
-Si le numéro de la parution existe déjà, il n’est pas ajouté et un message est affiché.
-![img3](https://github.com/CNED-SLAM/MediaTekDocuments/assets/100127886/225e10f2-406a-4b5e-bfa9-368d45456056)
-## La base de données
-La base de données 'mediatek86 ' est au format MySQL.<br>
-Voici sa structure :<br>
-![img4](https://github.com/CNED-SLAM/MediaTekDocuments/assets/100127886/4314f083-ec8b-4d27-9746-fecd1387d77b)
-<br>On distingue les documents "génériques" (ce sont les entités Document, Revue, Livres-DVD, Livre et DVD) des documents "physiques" qui sont les exemplaires de livres ou de DVD, ou bien les numéros d’une revue ou d’un journal.<br>
-Chaque exemplaire est numéroté à l’intérieur du document correspondant, et a donc un identifiant relatif. Cet identifiant est réel : ce n'est pas un numéro automatique. <br>
-Un exemplaire est caractérisé par :<br>
-. un état d’usure, les différents états étant mémorisés dans la table Etat ;<br>
-. sa date d’achat ou de parution dans le cas d’une revue ;<br>
-. un lien vers le fichier contenant sa photo de couverture de l'exemplaire, renseigné uniquement pour les exemplaires des revues, donc les parutions (chemin complet) ;
-<br>
-Un document a un titre (titre de livre, titre de DVD ou titre de la revue), concerne une catégorie de public, possède un genre et est entreposé dans un rayon défini. Les genres, les catégories de public et les rayons sont gérés dans la base de données. Un document possède aussi une image dont le chemin complet est mémorisé. Même les revues peuvent avoir une image générique, en plus des photos liées à chaque exemplaire (parution).<br>
-Une revue est un document, d’où le lien de spécialisation entre les 2 entités. Une revue est donc identifiée par son numéro de document. Elle a une périodicité (quotidien, hebdomadaire, etc.) et un délai de mise à disposition (temps pendant lequel chaque exemplaire est laissé en consultation). Chaque parution (exemplaire) d'une revue n'est disponible qu'en un seul "exemplaire".<br>
-Un livre a aussi pour identifiant son numéro de document, possède un code ISBN, un auteur et peut faire partie d’une collection. Les auteurs et les collections ne sont pas gérés dans des tables séparées (ce sont de simples champs textes dans la table Livre).<br>
-De même, un DVD est aussi identifié par son numéro de document, et possède un synopsis, un réalisateur et une durée. Les réalisateurs ne sont pas gérés dans une table séparée (c’est un simple champ texte dans la table DVD).
-Enfin, 3 tables permettent de mémoriser les données concernant les commandes de livres ou DVD et les abonnements. Une commande est effectuée à une date pour un certain montant. Un abonnement est une commande qui a pour propriété complémentaire la date de fin de l’abonnement : il concerne une revue.  Une commande de livre ou DVD a comme caractéristique le nombre d’exemplaires commandé et concerne donc un livre ou un DVD.<br>
-<br>
-La base de données est remplie de quelques exemples pour pouvoir tester son application. Dans les champs image (de Document) et photo (de Exemplaire) doit normalement se trouver le chemin complet vers l'image correspondante. Pour les tests, vous devrez créer un dossier, le remplir de quelques images et mettre directement les chemins dans certains tuples de la base de données qui, pour le moment, ne contient aucune image.<br>
-Lorsque l'application sera opérationnelle, c'est le personnel de la médiathèque qui sera en charge de saisir les informations des documents.
-## L'API REST
-L'accès à la BDD se fait à travers une API REST protégée par une authentification basique.<br>
-Le code de l'API se trouve ici :<br>
-https://github.com/CNED-SLAM/rest_mediatekdocuments<br>
-avec toutes les explications pour l'utiliser (dans le readme).
-## Installation de l'application
-Ce mode opératoire permet d'installer l'application pour pouvoir travailler dessus.<br>
-- Installer Visual Studio 2019 entreprise et les extension Specflow et newtonsoft.json (pour ce dernier, voir l'article "Accéder à une API REST à partir d'une application C#" dans le wiki de ce dépôt : consulter juste le début pour la configuration, car la suite permet de comprendre le code existant).<br>
-- Télécharger le code et le dézipper puis renommer le dossier en "mediatekdocuments".<br>
-- Récupérer et installer l'API REST nécessaire (https://github.com/CNED-SLAM/rest_mediatekdocuments) ainsi que la base de données (les explications sont données dans le readme correspondant).
+Cette application permet de gérer les documents (livres, DVD, revues) d'une médiathèque. Elle a été codée en C# sous Visual Studio 2022. C'est une application de bureau, prévue d'être installée sur plusieurs postes accédant à la même base de données.<br>
+L'application exploite une API REST pour accéder à la BDD MySQL.
+
+## Lien vers les dépôts d'origine
+<br>Vous pouvez retrouver le dépôt d'origine de l'application C# en cliquant sur ce lien: https://github.com/CNED-SLAM/MediaTekDocuments .
+<br>Vous pouvez retrouver le dépôt d'origine de l'API rest en cliquant sur ce lien: https://github.com/CNED-SLAM/rest_mediatekdocuments .
+<br>Dans le readme de ces dépôts se trouvent l'application C# et l'API rest d'origine, ainsi que la présentation d'origine.
+
+## Présentation des fonctionnalités ajoutées
+<br>Dans cette partie, vous pourrez retrouver les fonctionnalités ajoutées à l'application.
+
+### Fenêtre d'authentification
+<br>Lorsque l'application est lancée, une fenêtre demande à l'utilisateur de s'authentifier.
+<br>Son niveau de droit variera en fonction de son service: accès complet, partiel ou interdit à l'application.
+
+![img](images/1.png)
+![img](images/2.png)
+![img](images/3.png)
+![img](images/4.png)
+
+### Fenêtre des abonnements se terminant dans les 30 prochains jours
+
+<br>Si l'utilisateur a les permissions suffisantes (gestion), une fenêtre s'affiche au démarrage lui montrant la liste des abonnements se terminant dans les 30 prochains jours.
+<br>Cette fenêtre ne s'affichera pas si aucun abonnement n'est dans cette situation.
+
+![img](images/5.png)
+
+### Fenêtre de gestion des livres
+
+<br> Il est possible d'ajouter une nouvelle commande de livre une fois son numéro sélectionné, en précisant sa date de commande, son montant et son nombre d'exemplaires.
+
+![img](images/6.png)
+
+<br> Il est possible de modifier le statut d'une commande une fois son numéro sélectionné, en respectant l'ordre des étapes.
+<br> En cours -> Livrée / Relancée
+<br> Relancée -> Livrée / En cours
+<br> Livrée -> Réglée
+<br> Réglée: Etape finale
+<br> Lorsqu'une commande passe à "Livrée", les exemplaires sont automatiquement ajoutés dans la base de données.
+
+![img](images/7.png)
+
+<br> Il est possible de supprimer une commande de livre une fois son numéro sélectionné, à condition que le statut de la commande ne soit pas à "Livrée".
+
+![img](images/8.png)
+![img](images/9.png)
+
+### Fenêtre de gestion des dvds
+
+<br> Il est possible d'ajouter une nouvelle commande de dvd une fois son numéro sélectionné, en précisant sa date de commande, son montant et son nombre d'exemplaires.
+
+![img](images/10.png)
+
+<br> Il est possible de modifier le statut d'une commande une fois son numéro sélectionné, en respectant l'ordre des étapes.
+<br> En cours -> Livrée / Relancée
+<br> Relancée -> Livrée / En cours
+<br> Livrée -> Réglée
+<br> Réglée: Etape finale
+<br> Lorsqu'une commande passe à "Livrée", les exemplaires sont automatiquement ajoutés dans la base de données.
+
+![img](images/11.png)
+
+<br> Il est possible de supprimer une commande de dvd une fois son numéro sélectionné, à condition que le statut de la commande ne soit pas à "Livrée".
+
+![img](images/12.png)
+![img](images/13.png)
+
+### Fenêtre de gestion des revues
+
+<br> Il est possible d'ajouter une nouvelle commande de revue une fois son numéro sélectionné, en précisant sa date de commande, son montant et sa date d'expiration.
+
+![img](images/14.png)
+
+<br> Il est possible d'afficher la fenêtre des abonnements se terminant dans les 30 prochains jours.
+
+![img](images/15.png)
+
+<br> Il est possible de supprimer une commande de revue une fois son numéro sélectionné, à condition qu'aucun exemplaire n'est rattaché.
+
+![img](images/16.png)
+![img](images/17.png)
+![img](images/18.png)
+
+### Vidéo de présentation des fonctionnalités
+<br>Pour plus d'informations, il est possible de consulter cette vidéo, montrant toutes les
+fonctionnalités de la nouvelle application: https://youtu.be/d0FO9RWz3g0 .
+
+### Documentations techniques
+<br>Vous pourrez retrouver les documentations techniques de l'application C# et de l'API rest dans le dossier "documentations".
+<br>Pour les consulter en local, lancez Wamp64 et placez les deux dossiers contenus dans le dossier "documentations" du dépôt dans votre dossier "C:/wamp64/www".
+<br>Vous pourrez ainsi les consulter via les liens suivants: http://localhost/mediatekdocuments_doc (application C#) et http://localhost/rest_mediatekdocuments_doc (API rest).
+<br>Vous pouvez aussi accéder aux documentations en ligne via les liens suivants: (application C#) http://mediatekdocumentsugo.francecentral.cloudapp.azure.com/rest_mediatekdocuments_doc/ et http://mediatekdocumentsugo.francecentral.cloudapp.azure.com/mediatekdocuments_doc/html/85d46cf5-bf55-169b-05a9-fbd4084b4f5d.htm(API rest).
+
+### Installer l'application
+<br>Pour installer l'application, rendez-vous dans le dossier "installateurs".
+<br>Si vous voulez tester l'application en local, ouvrez le setup "MediaTekDocumentsInstalleurLocal", et suivez les étapes pour procéder à l'installation.
+<br>Si vous voulez tester l'application en ligne, ouvrez le setup "MediaTekDocumentsInstalleurOnline", et suivez les étapes pour procéder à l'installation.
+<br>Dans le cas où vous avez choisi l'application en ligne, l'application sera directement prête à être utilisée: un raccourci sur le bureau a normalement été créé, et l'application doit normalement apparaître dans la liste des programmes. Vous n'avez plus qu'à exécuter l'application, et à vous authentifier.
+<br>Dans le cas où vous avez choisi l'application en local, l'application sera installée: un raccourci sur le bureau a normalement été créé, et l'application doit normalement apparaître dans la liste des programmes. Cependant, l'API rest et la base de données n'ont pas encore été installés. Suivez donc les étapes suivants pour pouvoir installer l'API rest et la base de données en local.
+<br>1) Téléchargez l'API rest via ce lien: .
+<br>2) Renommer le dossier "rest_mediatekdocuments", placez-le dans votre dossier "C:/wamp64/www" et lancez Wamp64.
+<br>3) Connectez-vous à PhpMyAdmin via ce lien: http://localhost/phpmyadmin .
+<br>4) Créez une nouvelle base de données "mediatek86".
+<br>5) Allez dans "Importer" et sélectionnez le fichier "mediatek86.sql", puis exécutez.
+<br>6) L'API rest et la base de données ont été correctement mis en place. Vous n'avez plus qu'à lancer l'application, et à vous authentifier. Adaptez les informations contenues dans le ".env" de l'API rest si besoin (notamment si votre utilisateur de base de données est différent).

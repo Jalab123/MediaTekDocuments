@@ -1,0 +1,681 @@
+{
+	"info": {
+		"_postman_id": "7fee5936-41e9-4503-b396-b5cbbfbbf562",
+		"name": "MediaTekDocumentsCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42430647"
+	},
+	"item": [
+		{
+			"name": "http://localhost/rest_mediatekdocuments/livre",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"LivreTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"00017\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/\\rest_mediatekdocuments/livre",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"",
+						"rest_mediatekdocuments",
+						"livre"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/revue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"RevueTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"10002\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/revue",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"revue"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/etat",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"IdEtatTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"00003\");\r",
+							"});\r",
+							"pm.test(\"NbLivreTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(4);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/etat",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"etat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/dvd",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"IdDvdTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"20003\");\r",
+							"});\r",
+							"pm.test(\"NbDvdTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(4);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/dvd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"dvd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/exemplaire/{\"id\": \"10011\"}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"NumeroExemplaireTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"10011\");\r",
+							"});\r",
+							"pm.test(\"NbExemplairesTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(10);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/exemplaire/{\"id\": \"10011\"}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"exemplaire",
+						"{\"id\": \"10011\"}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/commande",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"IdCommandeTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"00002\");\r",
+							"});\r",
+							"pm.test(\"NbCommandesTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(3);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/commande",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"commande"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/commandedocument/{\"idlivredvd\": \"00001\"}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"IdCommandeDocumentTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"00004\");\r",
+							"});\r",
+							"pm.test(\"NbCommandeDocumentsTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/commandedocument/{\"idlivredvd\": \"00001\"}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"commandedocument",
+						"{\"idlivredvd\": \"00001\"}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/abonnement/{\"idrevue\": \"10001\"}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"NumeroExemplaireTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"00002\");\r",
+							"});\r",
+							"pm.test(\"NbExemplairesTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(2);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/abonnement/{\"idrevue\": \"10001\"}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"abonnement",
+						"{\"idrevue\": \"10001\"}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/suivi",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"IdSuiviTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].id).to.eql(\"00002\");\r",
+							"});\r",
+							"pm.test(\"NbSuivisTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(3);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/suivi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"suivi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/document/{\"id\": \"00001\"}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"TitreDocumentTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].titre).to.eql(\"Quand sort la recluse\");\r",
+							"});\r",
+							"pm.test(\"NbDocumentsTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/document/{\"id\": \"00001\"}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"document",
+						"{\"id\": \"00001\"}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/utilisateur/{\"login\": \"Culture\", \"pwd\":\"PasswordCulture\"}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"IdserviceUtiliasteurTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].idService).to.eql(4);\r",
+							"});\r",
+							"pm.test(\"NbUtilisateursTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/utilisateur/{\"login\": \"Culture\", \"pwd\":\"PasswordCulture\"}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"utilisateur",
+						"{\"login\": \"Culture\", \"pwd\":\"PasswordCulture\"}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost/rest_mediatekdocuments/service/{\"id\": \"1\"}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"NomServiceTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"][0].nom).to.eql(\"Administrateur\");\r",
+							"});\r",
+							"pm.test(\"NbUtilisateursTest\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[\"result\"].length).to.eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "adminpwd",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/rest_mediatekdocuments/service/{\"id\": \"1\"}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"rest_mediatekdocuments",
+						"service",
+						"{\"id\": \"1\"}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
