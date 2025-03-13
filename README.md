@@ -100,7 +100,7 @@ fonctionnalités de la nouvelle application: https://youtu.be/d0FO9RWz3g0 .
 <br>Dans le cas où vous avez choisi l'application en local, l'application sera installée: un raccourci sur le bureau a normalement été créé, et l'application doit normalement apparaître dans la liste des programmes. Cependant, l'API rest et la base de données n'ont pas encore été installés. Suivez donc les étapes suivants pour pouvoir installer l'API rest et la base de données en local.
 <br>1) Téléchargez l'API rest via ce lien: https://github.com/Jalab123/rest_mediatekdocuments.
 <br>2) Renommer le dossier "rest_mediatekdocuments", placez-le dans votre dossier "C:/wamp64/www" et lancez Wamp64.
-<br>3) Ouvrez une console en mode administrateur, dirigez vous dans le dossier de l'API rest avec la commande "C:/wamp64/www", et exécutez la commande "composer install".
+<br>3) Ouvrez une console en mode administrateur, dirigez vous dans le dossier de l'API rest avec la commande "cd C:/wamp64/www", et exécutez la commande "composer install".
 <br>4) Connectez-vous à PhpMyAdmin via ce lien: http://localhost/phpmyadmin .
 <br>5) Créez une nouvelle base de données "mediatek86".
 <br>6) Allez dans "Importer" et sélectionnez le fichier "mediatek86.sql", puis exécutez.
