@@ -90,7 +90,7 @@ fonctionnalités de la nouvelle application: https://youtu.be/d0FO9RWz3g0 .
 <br>Vous pourrez retrouver les documentations techniques de l'application C# et de l'API rest dans le dossier "documentations".
 <br>Pour les consulter en local, lancez Wamp64 et placez les deux dossiers contenus dans le dossier "documentations" du dépôt dans votre dossier "C:/wamp64/www".
 <br>Vous pourrez ainsi les consulter via les liens suivants: http://localhost/mediatekdocuments_doc (application C#) et http://localhost/rest_mediatekdocuments_doc (API rest).
-<br>Vous pouvez aussi accéder aux documentations en ligne via les liens suivants: (application C#) http://mediatekdocumentsugo.francecentral.cloudapp.azure.com/rest_mediatekdocuments_doc/ et http://mediatekdocumentsugo.francecentral.cloudapp.azure.com/mediatekdocuments_doc/html/85d46cf5-bf55-169b-05a9-fbd4084b4f5d.htm(API rest).
+<br>Vous pouvez aussi accéder aux documentations en ligne via les liens suivants: http://mediatekdocumentsugo.francecentral.cloudapp.azure.com/rest_mediatekdocuments_doc/ (application C#) et http://mediatekdocumentsugo.francecentral.cloudapp.azure.com/mediatekdocuments_doc/html/85d46cf5-bf55-169b-05a9-fbd4084b4f5d.htm (API rest).
 
 ### Installer l'application
 <br>Pour installer l'application, rendez-vous dans le dossier "installateurs".
@@ -98,9 +98,10 @@ fonctionnalités de la nouvelle application: https://youtu.be/d0FO9RWz3g0 .
 <br>Si vous voulez tester l'application en ligne, ouvrez le setup "MediaTekDocumentsInstalleurOnline", et suivez les étapes pour procéder à l'installation.
 <br>Dans le cas où vous avez choisi l'application en ligne, l'application sera directement prête à être utilisée: un raccourci sur le bureau a normalement été créé, et l'application doit normalement apparaître dans la liste des programmes. Vous n'avez plus qu'à exécuter l'application, et à vous authentifier.
 <br>Dans le cas où vous avez choisi l'application en local, l'application sera installée: un raccourci sur le bureau a normalement été créé, et l'application doit normalement apparaître dans la liste des programmes. Cependant, l'API rest et la base de données n'ont pas encore été installés. Suivez donc les étapes suivants pour pouvoir installer l'API rest et la base de données en local.
-<br>1) Téléchargez l'API rest via ce lien: .
+<br>1) Téléchargez l'API rest via ce lien: https://github.com/Jalab123/rest_mediatekdocuments.
 <br>2) Renommer le dossier "rest_mediatekdocuments", placez-le dans votre dossier "C:/wamp64/www" et lancez Wamp64.
-<br>3) Connectez-vous à PhpMyAdmin via ce lien: http://localhost/phpmyadmin .
-<br>4) Créez une nouvelle base de données "mediatek86".
-<br>5) Allez dans "Importer" et sélectionnez le fichier "mediatek86.sql", puis exécutez.
-<br>6) L'API rest et la base de données ont été correctement mis en place. Vous n'avez plus qu'à lancer l'application, et à vous authentifier. Adaptez les informations contenues dans le ".env" de l'API rest si besoin (notamment si votre utilisateur de base de données est différent).
+<br>3) Ouvrez une console en mode administrateur, dirigez vous dans le dossier de l'API rest avec la commande "C:/wamp64/www", et exécutez la commande "composer install".
+<br>4) Connectez-vous à PhpMyAdmin via ce lien: http://localhost/phpmyadmin .
+<br>5) Créez une nouvelle base de données "mediatek86".
+<br>6) Allez dans "Importer" et sélectionnez le fichier "mediatek86.sql", puis exécutez.
+<br>7) L'API rest et la base de données ont été correctement mis en place. Vous n'avez plus qu'à lancer l'application, et à vous authentifier. Adaptez les informations contenues dans le ".env" de l'API rest si besoin (notamment si votre utilisateur de base de données est différent).
